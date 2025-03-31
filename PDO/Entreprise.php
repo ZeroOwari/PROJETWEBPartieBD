@@ -60,11 +60,35 @@ class Entreprise
         }
     }
 
-    #modifie les valeurs d'un admin selon son id
+    public function getCompanyByData($data){
+        if (!is_array($data)){
+            return false;
+        }
+
+        try {
+            #on test tout en mode brut 
+            $stmt = $this->pdo->prepare('SELECT * FROM entreprise WHERE `Nom-entreprise` = :name OR `Description-entreprise` = :description OR `Email-entreprise` = :email OR `Telephone-entreprise` = :telephone OR `Note-entreprise` = :note OR `CheminImage-entreprise` = :path');
+            $stmt->bindParam(':name', $data['name']);
+            $stmt->bindParam(':description', $data['description']);
+            $stmt->bindParam(':email', $data['email']);
+            $stmt->bindParam(':telephone', $data['telephone']);
+            $stmt->bindParam(':note', $data['note']);
+            $stmt->bindParam(':path', $data['path']);
+            $stmt->execute();
+            return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    #modifie les valeurs d'une entreprise selon son id
     public function updateCompany($id, $data)
     {
-        if (!$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['telephone']) || !$this->checkCharacters($data['note'] ) || !$this->checkCharacters($data['path'] )
+        if (!$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['telephone']) || !$this->checkCharacters($data['path'] )
         ) {
+            return false;
+        }
+        if (!is_numeric($data['note'])) {
             return false;
         }
         if (!is_numeric($id) || $id <= 0) {
@@ -72,14 +96,13 @@ class Entreprise
             return false;
         }
         try {
-            $stmt = $this->pdo->prepare('UPDATE entreprise SET `Nom-entreprise` = :name, `Description-entreprise` = :description, `Email-entreprise` = :email, `Telephone-entreprise` = :telephone, `Note-entreprise` = :note, `CheminImage-entreprise` = :path WHERE `ID-entreprise` = :identreprise');
+            $stmt = $this->pdo->prepare('UPDATE entreprise SET `Nom-entreprise` = :name, `Description-entreprise` = :description, `Email-entreprise` = :email, `Telephone-entreprise` = :telephone, `Note-entreprise` = :note, `CheminImage-entreprise` = :path WHERE `ID-entreprise` = :id');
             $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
             $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
-            $stmt->bindParam(':competences', $data['competences'], PDO::PARAM_STR);
             $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
             $stmt->bindParam(':telephone', $data['telephone'], PDO::PARAM_STR);
-            $stmt->bindParam('note', $data[':note'], PDO::PARAM_STR);
-            $stmt->bindParam('path', $data[':path'], PDO::PARAM_STR);
+            $stmt->bindParam(':note', $data['note'], PDO::PARAM_INT);
+            $stmt->bindParam(':path', $data['path'], PDO::PARAM_STR);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
@@ -90,20 +113,23 @@ class Entreprise
 
     public function addCompany($data)
     {
-        if (!$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['telephone']) || !$this->checkCharacters($data['note'] ) || !$this->checkCharacters($data['path'] )
-        ) {
+        if (!$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['telephone']) || !$this->checkCharacters($data['path'])
+        )
+        {
+            return false;
+        }
+        if (!is_numeric($data['note']))
+        {
             return false;
         }
         try {
             $stmt = $this->pdo->prepare('INSERT INTO entreprise (`Nom-entreprise`, `Description-entreprise`, `Email-entreprise`, `Telephone-entreprise`, `Note-entreprise`, `CheminImage-entreprise`) VALUES (:name, :description, :email, :telephone, :note, :path)');
             $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
             $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
-            $stmt->bindParam(':competences', $data['competences'], PDO::PARAM_STR);
             $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
             $stmt->bindParam(':telephone', $data['telephone'], PDO::PARAM_STR);
-            $stmt->bindParam('note', $data[':note'], PDO::PARAM_STR);
-            $stmt->bindParam('path', $data[':path'], PDO::PARAM_STR);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':note', $data['note'], PDO::PARAM_INT);
+            $stmt->bindParam(':path', $data['path'], PDO::PARAM_STR);
             return $stmt->execute();
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage() . "<br>";
@@ -111,39 +137,71 @@ class Entreprise
         }
     }
 
-    public function deleteCompany($data)
+    public function deleteCompany($id)
     {
-        if (!is_numeric($data['id']) || $data['id'] <= 0) {
+        if (!is_numeric($id) || $id <= 0) {
             echo 'ID invalide.<br>';
             return false;
         }
         try {
-            $stmt = $this->pdo->prepare('DELETE FROM entreprise WHERE `ID-offre` = :id');
-            $stmt->bindParam(':id', $data['id']);
+            $stmt = $this->pdo->prepare('DELETE FROM entreprise WHERE `ID-entreprise` = :id');
+            $stmt->bindParam(':id', $id);
             return $stmt->execute();
         } catch (PDOException $e) {
             return false;
         }
     }
 
+
     #verif des caracteres speciaux
     public function checkCharacters($string)
     {
-        return preg_match('/^[a-zA-Z0-9_@.]+$/', $string);
+        // autorise @ . / \ et :
+        return preg_match('/^[a-zA-Z0-9_@.\/: ]+$/', $string);
     }
 
 }
 
 $test = new Entreprise('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
 
-$test->addCompany('{
-        "name":"Thales",
-        "description":"Cybersecurite et IA",
-        "email":"test@thales.com",
-        "telephone":"0223568978",
-        "note":"5",
-        "path":"c:/wamp64/www/Thales.jpg"}');
+/*
+$test->deleteCompany( 2);
 
-echo $test->getAllCompanies() ;
+$test->addCompany([
+        'name' => 'Thales',
+        'description' => 'Cybersecurite et IA',
+        'email' => 'test@thales.com',
+        'telephone' => '0223568978',
+        'note' =>  5,
+        'path' => 'c:/wamp64/www/Thales.jpg'
+]);
+
+$test->updateCompany(3 ,[
+        'name' => 'Thales',
+        'description' => 'Cybersecurite et IA',
+        'email' => 'test@thales.com',
+        'telephone' => '0223568978',
+        'note' =>  4,
+        'path' => 'c:/wamp64/www/Thales.jpg'
+]);
+
+echo $test->getAllCompanies() ; echo '<br>';
+echo $test->getCompanyByData([
+    'name' => 'Thales',
+    'description' => null,
+    'email' => null,
+    'telephone' => null,
+    'note' => null,
+    'path' => null
+]);echo '<br>';
+echo $test->getCompanyByData([
+    'name' => null,
+    'description' => null,
+    'email' => null,
+    'telephone' => null,
+    'note' => 4,
+    'path' => null
+]);
+*/
 
 ?>

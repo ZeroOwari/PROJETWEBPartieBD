@@ -1,7 +1,7 @@
 <?php 
 session_start();
 
-#=====================  Class Admin  =====================
+#=====================  Class Pilote  =====================
 class Pilote 
 {
     #====================  Var   ====================
@@ -77,7 +77,7 @@ class Pilote
             return false;
         }
         try {
-            $stmt = $this->pdo->prepare('SELECT * FROM pilotepromo WHERE `ID-admin` = :id');
+            $stmt = $this->pdo->prepare('SELECT * FROM pilotepromo WHERE `ID-pilote` = :id');
             $stmt->bindParam(':id', $id);
             $stmt->execute();
             $newjson = json_encode($stmt->fetch(PDO::FETCH_ASSOC));
@@ -110,7 +110,7 @@ class Pilote
             return false;
         }
         try {
-            $stmt = $this->pdo->prepare('SELECT * FROM etudiant WHERE `ID-admin` = :id');
+            $stmt = $this->pdo->prepare('SELECT * FROM etudiant WHERE `ID-etudiant` = :id');
             $stmt->bindParam(':id', $id);
             $stmt->execute();
             $newjson = json_encode($stmt->fetch(PDO::FETCH_ASSOC));
@@ -228,11 +228,11 @@ class Pilote
             return false;
         }
         try {
-            $stmt = $this->pdo->prepare('SELECT * FROM admin WHERE `Email-pilote` = :email');
+            $stmt = $this->pdo->prepare('SELECT * FROM pilotepromo WHERE `Email-pilote` = :email');
             $stmt->bindParam(':email', $data['email']);
             $stmt->execute();
-            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($admin && password_verify(':email', $admin['MDP-pilote'])) {
+            $pilote = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($pilote && password_verify(':email', $pilote['MDP-pilote'])) {
                 return true;
             } else {
                 return false;

@@ -60,7 +60,27 @@ class Offre
         }
     }
 
-    #modifie les valeurs d'un admin selon son id
+    public function getOfferByData($data){
+        if (!is_array($data)){
+            return false;
+        }
+        try{
+            $stmt = $this->pdo->prepare('SELECT * FROM offrestage WHERE `Nom-offre` = :name AND `Description-offre` = :description AND `Competences-offre` = :competences AND `Debut-offre` = :debut AND `Fin-offre` = :fin AND `ID-entreprise` = :identreprise');
+            $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
+            $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+            $stmt->bindParam(':competences', $data['competences'], PDO::PARAM_STR);
+            $stmt->bindParam(':debut', $data['debut'], PDO::PARAM_STR);
+            $stmt->bindParam(':fin', $data['fin'], PDO::PARAM_STR);
+            $stmt->bindParam(':identreprise', $data['identreprise'], PDO::PARAM_INT);
+            $stmt->execute();
+            return json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+        }
+        catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    #modifie les valeurs d'une offre selon son id
     public function updateOffer($id, $data)
     {
         if (!$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['competences']) || !$this->checkCharacters($data['debut']) || !$this->checkCharacters($data['fin']) || !$this->checkCharacters($data['identreprise'])
@@ -130,4 +150,10 @@ class Offre
 
 
 }
+
+$test = new Offre('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
+
+echo $test->getAllOffer();
+echo $test->getOfferById(1) ;
+
 ?>

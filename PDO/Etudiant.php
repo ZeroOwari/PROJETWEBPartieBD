@@ -1,7 +1,7 @@
 <?php 
 session_start();
 
-#=====================  Class Admin  =====================
+#=====================  Class Etudiant  =====================
 class Etudiant 
 {
     #====================  Var   ====================
@@ -81,7 +81,7 @@ class Etudiant
             return false;
         }
         try {
-            $stmt = $this->pdo->prepare('SELECT * FROM etudiant WHERE `ID-admin` = :id');
+            $stmt = $this->pdo->prepare('SELECT * FROM etudiant WHERE `ID-etudiant` = :id');
             $stmt->bindParam(':id', $id);
             $stmt->execute();
             $newjson = json_encode($stmt->fetch(PDO::FETCH_ASSOC));
@@ -115,11 +115,11 @@ class Etudiant
             return false;
         }
         try {
-            $stmt = $this->pdo->prepare('SELECT * FROM admin WHERE `Email-etudiant` = :email');
+            $stmt = $this->pdo->prepare('SELECT * FROM etudiant WHERE `Email-etudiant` = :email');
             $stmt->bindParam(':email', $data['email']);
             $stmt->execute();
-            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($admin && password_verify(':email', $admin['MDP-etudiant'])) {
+            $student = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($student && password_verify(':email', $student['MDP-etudiant'])) {
                 return true;
             } else {
                 return false;
