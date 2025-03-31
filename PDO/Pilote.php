@@ -32,6 +32,42 @@ class Pilote
         return $this->error;
     }
 
+    public function addPilote($data)
+    {
+        try {
+            $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM pilotepromo WHERE `Email-pilote` = :email');
+            $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+    
+            if ($count > 0) {
+                echo "Compte pilote avec l'email " . $data['email'] . " existe déjà.<br>";
+                return false;
+            }
+        } catch (PDOException $e) {
+            echo "Erreur regarde si un pilote existe déjà: " . $e->getMessage() . "<br>";
+            return false;
+        }
+
+        if ( !$this->checkCharacters($data['firstname']) || !$this->checkCharacters($data['lastname']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['password'])
+        ) {
+            return false;
+        }
+        
+    
+        try {
+            $stmt = $this->pdo->prepare('INSERT INTO pilotepromo (`Prenom-pilote`, `Nom-pilote`, `Email-pilote`, `MDP-pilote`) VALUES (:firstname, :lastname, :email, :password)');
+            $stmt->bindParam(':firstname', $data['firstname']);
+            $stmt->bindParam(':lastname', $data['lastname']);
+            $stmt->bindParam(':email', $data['email']);
+            $password = password_hash($data['password'], PASSWORD_BCRYPT);
+            $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Erreur: " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
 
     #retourne le pilote à l'id indiqué
     public function getPilote($id)
@@ -122,7 +158,7 @@ class Pilote
         
     
         try {
-            $stmt = $this->pdo->prepare('INSERT INTO etudiant (`Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant`, `ID-CV`, `ID-promotion-etudiant`) VALUES (:firstname, :lastname, :email, :password, :telephone, :date, :idcv, :idpromo)');
+            $stmt = $this->pdo->prepare('INSERT INTO etudiant (`Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant`, `Chemin-CV`, `ID-promotion-etudiant`) VALUES (:firstname, :lastname, :email, :password, :telephone, :date, :pathcv, :idpromo)');
             $stmt->bindParam(':firstname', $data['firstname'],PDO::PARAM_STR);
             $stmt->bindParam(':lastname', $data['lastname'],PDO::PARAM_STR);
             $stmt->bindParam(':email', $data['email'],PDO::PARAM_STR);
@@ -130,7 +166,7 @@ class Pilote
             $stmt->bindParam(':password', $password, PDO::PARAM_STR);
             $stmt->bindParam(':telephone', $data['telephone'],PDO::PARAM_STR);
             $stmt->bindParam(':date', $data['date'],PDO::PARAM_STR);
-            $stmt->bindParam(':idcv', $data['idcv'],PDO::PARAM_STR);
+            $stmt->bindParam(':pathcv', $data['pathcv'],PDO::PARAM_STR);
             $stmt->bindParam('idpromo', $data['idpromo'],PDO::PARAM_STR);
             $stmt->execute();
         } catch (PDOException $e) {
@@ -150,6 +186,35 @@ class Pilote
             $stmt->bindParam(':id', $id);
             return $stmt->execute();
         } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function updateStudent($id, $data)
+    {
+        if (!$this->checkCharacters($data['firstname']) || !$this->checkCharacters($data['lastname']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['password'])
+        ) {
+            return false;
+        }
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('UPDATE etudiant SET `Prenom-etudiant` = :firstname, `Nom-etudiant` = :lastname, `Email-etudiant` = :email, `MDP-etudiant` = :password, `Telephone-etudiant` = :telephone, `DateNaissance-etudiant` = :date, `Chamin-CV` = :pathcv, `ID-promotion-etudiant` = :idpromo WHERE `ID-etudiant` = :id');
+            $stmt->bindParam(':firstname', $data['firstname'], PDO::PARAM_STR);
+            $stmt->bindParam(':lastname', $data['lastname'], PDO::PARAM_STR);
+            $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+            $password = password_hash($data['password'], PASSWORD_BCRYPT);
+            $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':telephone', $data['telephone']);
+            $stmt->bindParam(':date', $data['date']);
+            $stmt->bindParam(':pathcv', $data['pathcv'],PDO::PARAM_STR);
+            $stmt->bindParam('idpromo', $data['idpromo']);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage() . "<br>";
             return false;
         }
     }

@@ -55,7 +55,7 @@ class Etudiant
         
     
         try {
-            $stmt = $this->pdo->prepare('INSERT INTO etudiant (`Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant`, `ID-CV`, `ID-promotion-etudiant`) VALUES (:firstname, :lastname, :email, :password, :telephone, :date, :idcv, :idpromo)');
+            $stmt = $this->pdo->prepare('INSERT INTO etudiant (`Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant`, `Chemin-CV`, `ID-promotion-etudiant`) VALUES (:firstname, :lastname, :email, :password, :telephone, :date, :pathcv, :idpromo)');
             $stmt->bindParam(':firstname', $data['firstname'],PDO::PARAM_STR);
             $stmt->bindParam(':lastname', $data['lastname'],PDO::PARAM_STR);
             $stmt->bindParam(':email', $data['email'],PDO::PARAM_STR);
@@ -63,7 +63,7 @@ class Etudiant
             $stmt->bindParam(':password', $password, PDO::PARAM_STR);
             $stmt->bindParam(':telephone', $data['telephone'],PDO::PARAM_STR);
             $stmt->bindParam(':date', $data['date'],PDO::PARAM_STR);
-            $stmt->bindParam(':idcv', $data['idcv'],PDO::PARAM_STR);
+            $stmt->bindParam(':pathcv', $data['pathcv'],PDO::PARAM_STR);
             $stmt->bindParam('idpromo', $data['idpromo'],PDO::PARAM_STR);
             $stmt->execute();
         } catch (PDOException $e) {
@@ -72,20 +72,6 @@ class Etudiant
         }
     }
 
-    public function deleteStudent($id)
-    {
-        if (!is_numeric($id) || $id <= 0) {
-            echo 'ID invalide.<br>';
-            return false;
-        }
-        try {
-            $stmt = $this->pdo->prepare('DELETE FROM etudiant WHERE `ID-etudiant` = :id');
-            $stmt->bindParam(':id', $id);
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            return false;
-        }
-    }
 
     #retourne les étudiants à l'id indiqué
     public function getStudent($id)
