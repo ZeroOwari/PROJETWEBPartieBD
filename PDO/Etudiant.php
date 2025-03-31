@@ -2,7 +2,7 @@
 session_start();
 
 #=====================  Class Admin  =====================
-class Admin 
+class Etudiant 
 {
     #====================  Var   ====================
     public $pdo;
@@ -30,6 +30,61 @@ class Admin
     public function getError()
     {
         return $this->error;
+    }
+
+    public function addStudent($data){
+        try {
+            $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM etudiant WHERE `Email-etudiant` = :email');
+            $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+    
+            if ($count > 0) {
+                echo "Compte etudiant avec l'email " . $data['email'] . " existe déjà.<br>";
+                return false;
+            }
+        } catch (PDOException $e) {
+            echo "Erreur etudiant existant déjà." . $e->getMessage() . "<br>";
+            return false;
+        }
+
+        if ( !$this->checkCharacters($data['firstname']) || !$this->checkCharacters($data['lastname']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['password'] || !$this->checkCharacters($data['Telephone-etudiant']) || !$this->checkCharacters($data['DateNaissance-etudiant']) || !$this->checkCharacters($data['ID-CV']) || !$this->checkCharacters($data['ID-promotion-etudiant']) )
+        ) {
+            return false;
+        }
+        
+    
+        try {
+            $stmt = $this->pdo->prepare('INSERT INTO etudiant (`Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant`, `ID-CV`, `ID-promotion-etudiant`) VALUES (:firstname, :lastname, :email, :password, :telephone, :date, :idcv, :idpromo)');
+            $stmt->bindParam(':firstname', $data['firstname'],PDO::PARAM_STR);
+            $stmt->bindParam(':lastname', $data['lastname'],PDO::PARAM_STR);
+            $stmt->bindParam(':email', $data['email'],PDO::PARAM_STR);
+            $password = password_hash($data['password'], PASSWORD_BCRYPT);
+            $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+            $stmt->bindParam(':telephone', $data['telephone'],PDO::PARAM_STR);
+            $stmt->bindParam(':date', $data['date'],PDO::PARAM_STR);
+            $stmt->bindParam(':idcv', $data['idcv'],PDO::PARAM_STR);
+            $stmt->bindParam('idpromo', $data['idpromo'],PDO::PARAM_STR);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Erreur: " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+
+    public function deleteStudent($id)
+    {
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('DELETE FROM etudiant WHERE `ID-etudiant` = :id');
+            $stmt->bindParam(':id', $id);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 
     #retourne les étudiants à l'id indiqué
@@ -95,5 +150,11 @@ class Admin
         }
     
 }
+
+#=====================  Test  =====================
+$test = new Etudiant ('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
+
+echo $test->getAllStudent() ;
+echo $test->getStudent(1) ;
 
 ?>

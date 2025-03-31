@@ -189,7 +189,7 @@ class Admin
             return false;
         }
 
-        if ( !$this->checkCharacters($data['firstname']) || !$this->checkCharacters($data['lastname']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['password'] || !this->checkCharacters($data['Telephone-etudiant']) || !$this->checkCharacters($data['DateNaissance-etudiant']) || !$this->checkCharacters($data['ID-CV']) || !$this->checkCharacters($data['ID-promotion-etudiant']) )
+        if ( !$this->checkCharacters($data['firstname']) || !$this->checkCharacters($data['lastname']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['password'] || !$this->checkCharacters($data['Telephone-etudiant']) || !$this->checkCharacters($data['DateNaissance-etudiant']) || !$this->checkCharacters($data['ID-CV']) || !$this->checkCharacters($data['ID-promotion-etudiant']) )
         ) {
             return false;
         }
@@ -404,7 +404,7 @@ echo $test->getAdmin(1);
 echo $test->getAllAdmins();
 
 echo $test->getAllStudent();
-echo $test->getAllStudent(1);
+echo $test->getStudent(1);
 
 echo $test->getAllPilote();
 echo $test->getPilote(1);
