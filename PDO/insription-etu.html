@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web4ALL Navigation</title>
+  <link rel="stylesheet" href="assets/style-web.css">
+  <script src="../controler/inscription.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="body bg-white">
+<header>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="assets/logo.png" alt="Web4ALL Logo">
+    </div>
+
+    <div class="services-dropdown">
+      <button class="hamburger-menu">
+        <span class="hamburger-icon"></span>
+        Services
+      </button>
+      <div class="dropdown-content">
+        <a href="accueil.html"><i class="fas fa-home"></i> Accueil</a>
+        <a href="a-propos.html"><i class="fas fa-info-circle"></i> À propos de nous</a>
+        <a href="avis.html"><i class="fas fa-star"></i> Avis</a>
+        <a href="recherche.html"><i class="fas fa-search"></i> Recherche</a>
+        <a href="espace-tuteur.html"><i class="fas fa-chalkboard-teacher"></i> Espace Tuteur</a>
+        <a href="mon-compte-etudiant.html"><i class="fas fa-user-graduate"></i> Mon compte Étudiant</a>
+        <a href="mon-compte-tuteur.html"><i class="fas fa-user-tie"></i> Mon compte Tuteur</a>
+      </div>
+    </div>
+    <h1> P.A.I.J </h1>
+    <div class="right-menu">
+      <a href="connexion.html" class="nav-button active"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+      <a href="espace-recruteur.html" class="nav-button"><i class="fas fa-briefcase"></i> Espace recruteur</a>
+    </div>
+  </nav>
+</header>
+<div class="container container-white">
+  <h1 class="job-title job-title-blue">Espace étudiant</h1>
+</div>
+<img src="assets/flou2.png" class="image">
+<div class="bloc bloc-white">
+  <h2 class="titre-connexion titre-connexion-blue">Créer votre compte</h2>
+  <form class="formulaire-connexion" action="inscriptionEtudiant.php" method="POST">
+    <div class="champ-formulaire champ-formulaire-blue champ-formulaire-inscription">
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" placeholder="Entrez votre adresse email">
+    </div>
+    <div class="champ-formulaire champ-formulaire-blue champ-formulaire-inscription">
+        <label for="firstname">Prénom</label>
+        <input type="prenom" id="firstname" name = "firstname" placeholder="Entrez votre prénom">
+      </div>
+    <div class="champ-formulaire champ-formulaire-blue champ-formulaire-inscription">
+      <label for="name">Nom</label>
+      <input type="nom" id="name" name = "name" placeholder="Entrez votre nom">
+    </div>
+    <div class="champ-formulaire champ-formulaire-blue champ-formulaire-inscription">
+      <label for="Date">Date de naissance</label>
+      <input type="Date" id="Date" name = "Date" placeholder="YYYY-MM-DD">
+    </div>
+    <div class="champ-formulaire champ-formulaire-blue champ-formulaire-inscription">
+      <label for="password">Mot de passe</label>
+      <div style="position: relative;">
+        <input type="password" id="password" name = "password" placeholder="Tapez votre mode passe">
+        <button type="button" class="toggle-password" onclick="togglePassword('password')">👁</button>
+      </div>
+    </div>
+    <div class="champ-formulaire champ-formulaire-blue champ-formulaire-inscription">
+      <label for="confirmPassword">Confirmer votre mot de passe</label>
+      <div style="position: relative;">
+        <input type="password" id="confirmPassword" name = "confirmPassword" placeholder="Taper votre mot de passe">
+        <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">👁</button>
+      </div>
+    </div>
+
+    <button type="submit" value="submit" id="login-button" class="bouton-connexion bouton-connexion-blue">Créer un compte</button>
+  </form>
+</div>
+
+</body>
+</html>

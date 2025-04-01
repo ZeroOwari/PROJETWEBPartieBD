@@ -699,10 +699,10 @@ class Pilote
 }
 
 #=====================  Test  =====================
-
+/*
 $test = new Pilote ('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
 
-/*
+
 $test->addOffer([
     'name'=> 'Chef Pentester',
     'description'=> 'Test de sécurité',
@@ -724,7 +724,7 @@ $test->addCompany([
     'path'=> 'images/ankama.png',
     'idauteur'=> '1'
 ]);
-*/
+
 
 echo $test->getAllStudent() ;
 echo $test->getStudentById(1) ;
@@ -735,6 +735,6 @@ echo $test->getAllPilote() ;
 echo $test->getAllOffer() ;
 echo $test->getOfferById(1) ;
 
-
+*/
 
 ?>
