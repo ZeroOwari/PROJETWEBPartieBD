@@ -40,4 +40,8 @@ $create->addStudent([
     'path' => null,
     'idpromo' => null,
 ]);
+
+// Redirection vers la page d'accueil après l'inscription
+header("Location: ../index.php?inscription=success");
+exit();
 ?>
