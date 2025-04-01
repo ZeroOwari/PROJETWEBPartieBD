@@ -234,6 +234,81 @@ class Etudiant
         }
     }
 
+    public function addFavori($id_etudiant, $id_offre)
+    {
+        if (!is_numeric($id_etudiant) || $id_etudiant <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        if (!is_numeric($id_offre) || $id_offre <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('INSERT INTO favoris (`ID-etudiant`, `ID-offre`) VALUES (:id_etudiant, :id_offre)');
+            $stmt->bindParam(':id_etudiant', $id_etudiant, PDO::PARAM_INT);
+            $stmt->bindParam(':id_offre', $id_offre, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Erreur : " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+   
+    public function removeFavori($id_etudiant, $id_offre)
+    {
+        if (!is_numeric($id_etudiant) || $id_etudiant <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        if (!is_numeric($id_offre) || $id_offre <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('DELETE FROM favoris WHERE `ID-etudiant` = :id_etudiant AND `ID-offre` = :id_offre');
+            $stmt->bindParam(':id_etudiant', $id_etudiant, PDO::PARAM_INT);
+            $stmt->bindParam(':id_offre', $id_offre, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Erreur : " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+
+    public function getFavoriEtudiant($id_etudiant){
+        if (!is_numeric($id_etudiant) || $id_etudiant <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM favoris WHERE `ID-etudiant` = :id_etudiant");
+            $stmt->bindParam(':id_etudiant', $id_etudiant, PDO::PARAM_INT);
+            $stmt->execute();
+            return json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+        }
+        catch (PDOException $e) {
+            echo "Erreur : " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+
+    public function getFavoriOffre($id_offre){
+        if (!is_numeric($id_offre) || $id_offre <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM favoris WHERE `ID-offre` = :id_offre");
+            $stmt->bindParam(':id_offre', $id_offre, PDO::PARAM_INT);
+            $stmt->execute();
+            return json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+        }
+        catch (PDOException $e) {
+            echo "Erreur : " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
 
     #verifie la correspondance email de log / mdp
     public function checkLogValidation($data)
