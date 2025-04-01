@@ -1,5 +1,4 @@
 <?php 
-session_start();
 
 #=====================  Class Pilote  =====================
 class Pilote 
@@ -27,9 +26,58 @@ class Pilote
         }
         
     }
-    public function getError()
+
+    #retourne le pilote à l'id indiqué
+    public function getPiloteById($id)
     {
-        return $this->error;
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM pilotepromo WHERE `ID-pilote` = :id');
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            $newjson = json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+            return $newjson;
+                
+        } catch (PDOException $e) {
+            return false;
+        }
+    }       
+
+    #retourne tous les étudiants 
+    public function getAllPilote()
+    {
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM pilotepromo');
+            $stmt->execute();
+            $newjson = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            return $newjson;
+                
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function getPiloteByData($data){
+        if ( !$this->checkCharacters($data['firstname']) || !$this->checkCharacters($data['lastname']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['password'])
+        ) {
+            return false;
+        }
+    
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM pilotepromo WHERE `Prenom-pilote` = :firstname AND `Nom-pilote` = :lastname AND `Email-pilote` = :email AND `MDP-pilote` = :password');
+            $stmt->bindParam(':firstname', $data['firstname'],PDO::PARAM_STR);
+            $stmt->bindParam(':lastname', $data['lastname'],PDO::PARAM_STR);
+            $stmt->bindParam(':email', $data['email'],PDO::PARAM_STR);
+            $password = password_hash($data['password'], PASSWORD_BCRYPT);
+            $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+            $stmt->execute();
+            return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 
     public function addPilote($data)
@@ -69,41 +117,10 @@ class Pilote
         }
     }
 
-    #retourne le pilote à l'id indiqué
-    public function getPilote($id)
-    {
-        if (!is_numeric($id) || $id <= 0) {
-            echo 'ID invalide.<br>';
-            return false;
-        }
-        try {
-            $stmt = $this->pdo->prepare('SELECT * FROM pilotepromo WHERE `ID-pilote` = :id');
-            $stmt->bindParam(':id', $id);
-            $stmt->execute();
-            $newjson = json_encode($stmt->fetch(PDO::FETCH_ASSOC));
-            return $newjson;
-             
-        } catch (PDOException $e) {
-            return false;
-        }
-    }       
 
-    #retourne tous les étudiants 
-    public function getAllPilote()
-    {
-        try {
-            $stmt = $this->pdo->prepare('SELECT * FROM pilotepromo');
-            $stmt->execute();
-            $newjson = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
-            return $newjson;
-             
-        } catch (PDOException $e) {
-            return false;
-        }
-    }
 
     #retourne les étudiants à l'id indiqué
-    public function getStudent($id)
+    public function getStudentById($id)
     {
         if (!is_numeric($id) || $id <= 0) {
             echo 'ID invalide.<br>';
@@ -130,6 +147,26 @@ class Pilote
             $newjson = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
             return $newjson;
              
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function getStudentByData($data){
+        if ( !$this->checkCharacters($data['firstname']) || !$this->checkCharacters($data['lastname']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['password'])
+        ) {
+            return false;
+        }
+    
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM etudiant WHERE `Prenom-etudiant` = :firstname AND `Nom-etudiant` = :lastname AND `Email-etudiant` = :email AND `MDP-etudiant` = :password');
+            $stmt->bindParam(':firstname', $data['firstname'],PDO::PARAM_STR);
+            $stmt->bindParam(':lastname', $data['lastname'],PDO::PARAM_STR);
+            $stmt->bindParam(':email', $data['email'],PDO::PARAM_STR);
+            $password = password_hash($data['password'], PASSWORD_BCRYPT);
+            $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+            $stmt->execute();
+            return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
         } catch (PDOException $e) {
             return false;
         }
@@ -219,7 +256,405 @@ class Pilote
         }
     }
 
+    public function getAllOffer()
+    {
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM offrestage');
+            $stmt->execute();
+            $newjson = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            return $newjson;
+             
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 
+    public function getOfferById($id)
+    {
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM offrestage WHERE `ID-offre` = :id');
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            $newjson = json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+            return $newjson;
+             
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function getOfferByData($data){
+        if (!is_array($data)){
+            return false;
+        }
+        try{
+            $stmt = $this->pdo->prepare('SELECT * FROM offrestage WHERE `Nom-offre` = :name AND `Description-offre` = :description AND `Competences-offre` = :competences AND `Debut-offre` = :debut AND `Fin-offre` = :fin AND `Secteur-offre` = :secteur AND `Localisation-offre` = :localisation `ID-entreprise` = :identreprise');
+            $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
+            $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+            $stmt->bindParam(':competences', $data['competences'], PDO::PARAM_STR);
+            $stmt->bindParam(':debut', $data['debut'], PDO::PARAM_STR);
+            $stmt->bindParam(':fin', $data['fin'], PDO::PARAM_STR);
+            $stmt->bindParam('sector', $data['sector'], PDO::PARAM_STR);
+            $stmt->bindParam(':localisation', $data['localisation'], PDO::PARAM_STR);
+            $stmt->bindParam(':identreprise', $data['identreprise'], PDO::PARAM_INT);
+            $stmt->execute();
+            return json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+        }
+        catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function deleteOffer($data)
+    {
+        if (!is_numeric($data['id']) || $data['id'] <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('DELETE FROM offrestage WHERE `ID-offre` = :id');
+            $stmt->bindParam(':id', $data['id']);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            return false;
+        }
+        try{
+            $stmt = $this->pdo->prepare('DELETE FROM Publication WHERE `ID-offre` = :id');
+            $stmt->bindParam(':id', $data['id']);
+            return $stmt->execute();
+        }
+        catch (PDOException $e) {
+            return false;
+        }
+    }
+
+
+
+    #modifie les valeurs d'une offre selon son id
+    public function updateOffer($id, $data)
+    {
+        if (!$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['competences']) || !$this->checkCharacters($data['debut']) || !$this->checkCharacters($data['fin']) ||  !$this->checkCharacters($data['sector']) ||  !$this->checkCharacters($data['localisation']) || !$this->checkCharacters($data['identreprise'])
+        ) {
+            return false;
+        }
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('UPDATE offrestage SET `Nom-offre` = :name, `Description-offre` = :description, `Competences-offre` = :competences, `Debut-offre` = :debut, `Fin-offre` = :fin, `Secteur-offre` = :sector, `Localisation-offre` = :loacalisation WHERE `ID-entreprise` = :identreprise');
+            $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
+            $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+            $stmt->bindParam(':competences', $data['competences'], PDO::PARAM_STR);
+            $stmt->bindParam(':debut', $data['debut'], PDO::PARAM_STR);
+            $stmt->bindParam(':fin', $data['fin'], PDO::PARAM_STR);
+            $stmt->bindParam('sector', $data['sector'], PDO::PARAM_STR);
+            $stmt->bindParam(':localisation', $data['localisation'], PDO::PARAM_STR);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+
+
+    public function addOffer($data)
+    {
+        if (
+            !$this->checkCharacters($data['name']) ||  !$this->checkCharacters($data['description']) ||  !$this->checkCharacters($data['competences']) ||  !$this->checkCharacters($data['debut']) || !$this->checkCharacters($data['fin']) ||  !$this->checkCharacters($data['sector']) ||  !$this->checkCharacters($data['localisation'])) {
+            echo "Invalid characters in input.<br>";
+            return false;
+        }
+        
+    
+        if (!is_numeric($data['identreprise']) || !is_numeric($data['idauteur'])) {
+            echo "Invalid entreprise or auteur ID.<br>";
+            return false;
+        }
+    
+        try {
+            $stmt = $this->pdo->prepare('INSERT INTO offrestage (`Nom-offre`, `Description-offre`, `Competences-offre`, `Debut-offre`, `Fin-offre`, `Secteur-offre`, `Localisation-offre`, `ID-entreprise`) VALUES (:name, :description, :competences, :debut, :fin, :sector, :localisation, :identreprise)');
+            $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
+            $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+            $stmt->bindParam(':competences', $data['competences'], PDO::PARAM_STR);
+            $stmt->bindParam(':debut', $data['debut'], PDO::PARAM_STR);
+            $stmt->bindParam(':fin', $data['fin'], PDO::PARAM_STR);
+            $stmt->bindParam(':sector', $data['sector'], PDO::PARAM_STR);
+            $stmt->bindParam(':localisation', $data['localisation'], PDO::PARAM_STR);
+            $stmt->bindParam(':identreprise', $data['identreprise'], PDO::PARAM_INT);
+    
+            $stmt->execute();
+    
+            $stmt = $this->pdo->prepare('INSERT INTO Publication (`ID-offre`, `ID-auteur`) VALUES (SELECT `ID-offre` FROM offrestage ORDER BY `ID-offre` DESC LIMIT 1, :idauteur)');
+            $stmt->bindParam(':idauteur', $data['idauteur'], PDO::PARAM_INT);
+            $stmt->execute();
+    
+            return true;
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+
+    public function getAllPromotions()
+    {
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM promotion');
+            $stmt->execute();
+            $newjson = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            return $newjson;
+              
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function getPromotionById($id){
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM promotion WHERE `ID-promo` = :id');
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            $newjson = json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+            return $newjson;
+              
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function getPromotionByData($data){
+        if ( !$this->checkCharacters($data['nom']) || !$this->checkCharacters($data['dateDebut']) || !$this->checkCharacters($data['dateFin']) ){
+            return false;
+        }
+    
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM promotion WHERE `Nom-promo` = :nom AND `DateDebut-promo` = :datedebut AND `DateFin-promo` = :datefin');
+            $stmt->bindParam(':nom', $data['nom'],PDO::PARAM_STR);
+            $stmt->bindParam(':datedebut', $data['dateDebut'],PDO::PARAM_STR);
+            $stmt->bindParam(':datefin', $data['dateFin'],PDO::PARAM_STR);
+            $stmt->execute();
+            $newjson = json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+            return $newjson;
+              
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function addPromotion($data){
+
+        if ( !$this->checkCharacters($data['nom']) || !$this->checkCharacters($data['dateDebut']) || !$this->checkCharacters($data['dateFin']) ){
+            return false;
+        }
+        
+    
+        try {
+            $stmt = $this->pdo->prepare('INSERT INTO promotion (`Nom-promo`, `Debut-promo`, `Fin-promo`) VALUES (:nom, :datedebut, :datefin)');
+            $stmt->bindParam(':nom', $data['nom'],PDO::PARAM_STR);
+            $stmt->bindParam(':datedebut', $data['dateDebut'],PDO::PARAM_STR);
+            $stmt->bindParam(':datefin', $data['dateFin'],PDO::PARAM_STR);
+            $stmt->execute();
+
+        } catch (PDOException $e) {
+            echo "Erreur lors de l'ajout de la promotion: " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+
+    public function updatePromotion($data){
+        if ( !$this->checkCharacters($data['nom']) || !$this->checkCharacters($data['dateDebut']) || !$this->checkCharacters($data['dateFin']) ){
+            return false;
+        }
+        
+    
+        try {
+            $stmt = $this->pdo->prepare('UPDATE promotion SET `Nom-promo` = :nom, `Debut-promo` = :datedebut, `Fin-promo` = :datefin WHERE `ID-promo` = :id');
+            $stmt->bindParam(':nom', $data['nom'],PDO::PARAM_STR);
+            $stmt->bindParam(':datedebut', $data['dateDebut'],PDO::PARAM_STR);
+            $stmt->bindParam(':datefin', $data['dateFin'],PDO::PARAM_STR);
+            $stmt->bindParam(':id', $data['id'],PDO::PARAM_INT);
+            $stmt->execute();
+
+        } catch (PDOException $e) {
+            echo "Erreur lors de la mise à jour de la promotion: " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+
+
+    public function deletePromotion($id){
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('DELETE FROM promotion WHERE `ID-promo` = :id');
+            $stmt->bindParam(':id', $id);
+            return $stmt->execute();
+              
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function getAllStudentsByPromotion($id){
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM etudiant WHERE `ID-promotion-etudiant` = :id');
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            $newjson = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            return $newjson;
+              
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function addCompany($data)
+    {
+        if (!$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['telephone']) || !$this->checkCharacters($data['path'])
+        )
+        {
+            return false;
+        }
+        if (!is_numeric($data['note']))
+        {
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('INSERT INTO entreprise (`Nom-entreprise`, `Description-entreprise`, `Email-entreprise`, `Telephone-entreprise`, `Note-entreprise`, `CheminImage-entreprise`) VALUES (:name, :description, :email, :telephone, :note, :path)');
+            $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
+            $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+            $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+            $stmt->bindParam(':telephone', $data['telephone'], PDO::PARAM_STR);
+            $stmt->bindParam(':note', $data['note'], PDO::PARAM_INT);
+            $stmt->bindParam(':path', $data['path'], PDO::PARAM_STR);
+            return $stmt->execute();
+
+            $stmt = $this->pdo->prepare('INSERT INTO Ajout (`ID-entreprise`, `ID-auteur`) VALUES (SELECT `ID-entreprise` FROM offrestage ORDER BY `ID-entreprise` DESC LIMIT 1, :idauteur)');
+            $stmt->bindParam(':idauteur', $data['idauteur'], PDO::PARAM_INT);
+            $stmt->execute();
+
+            return true;
+        } 
+        catch (PDOException $e) 
+        {
+            echo "Error: " . $e->getMessage() . "<br>";
+            return false;
+        }
+
+    }
+
+    #modifie les valeurs d'une entreprise selon son id
+    public function updateCompany($id, $data)
+    {
+        if (!$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['email']) || !$this->checkCharacters($data['telephone']) || !$this->checkCharacters($data['path'] )
+        ) {
+            return false;
+        }
+        if (!is_numeric($data['note'])) {
+            return false;
+        }
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('UPDATE entreprise SET `Nom-entreprise` = :name, `Description-entreprise` = :description, `Email-entreprise` = :email, `Telephone-entreprise` = :telephone, `Note-entreprise` = :note, `CheminImage-entreprise` = :path WHERE `ID-entreprise` = :id');
+            $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
+            $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+            $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+            $stmt->bindParam(':telephone', $data['telephone'], PDO::PARAM_STR);
+            $stmt->bindParam(':note', $data['note'], PDO::PARAM_INT);
+            $stmt->bindParam(':path', $data['path'], PDO::PARAM_STR);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+
+
+    public function deleteCompany($id)
+    {
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('DELETE FROM entreprise WHERE `ID-entreprise` = :id');
+            $stmt->bindParam(':id', $id);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function getAllCompanies()
+    {
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM entreprise');
+            $stmt->execute();
+            $newjson = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            return $newjson;
+             
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function getCompanyById($id)
+    {
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM entreprise WHERE `ID-entreprise` = :id');
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            $newjson = json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+            return $newjson;
+             
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function getCompanyByData($data){
+        if (!is_array($data)){
+            return false;
+        }
+
+        try {
+            #on test tout en mode brut 
+            $stmt = $this->pdo->prepare('SELECT * FROM entreprise WHERE `Nom-entreprise` = :name OR `Description-entreprise` = :description OR `Email-entreprise` = :email OR `Telephone-entreprise` = :telephone OR `Note-entreprise` = :note OR `CheminImage-entreprise` = :path');
+            $stmt->bindParam(':name', $data['name']);
+            $stmt->bindParam(':description', $data['description']);
+            $stmt->bindParam(':email', $data['email']);
+            $stmt->bindParam(':telephone', $data['telephone']);
+            $stmt->bindParam(':note', $data['note']);
+            $stmt->bindParam(':path', $data['path']);
+            $stmt->execute();
+            return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 
     #verifie la correspondance email de log / mdp
     public function checkLogValidation($data)
@@ -245,7 +680,7 @@ class Pilote
     #verif des caracteres speciaux
     public function checkCharacters($string)
     {
-        return preg_match('/^[a-zA-Z0-9_@.\/: -]+$/', $string);
+        return preg_match('/^[\p{L}\p{N}_@.\/: \-,+]+$/u', $string);
     }
 
 
@@ -253,11 +688,22 @@ class Pilote
 }
 
 #=====================  Test  =====================
-/*
+
 $test = new Pilote ('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
 
+$test->addOffer([
+    'name'=> 'Pentester',
+    'description'=> 'Test de sécurité',
+    'competences'=> 'Python, C++',
+    'debut'=> '2025-01-01',
+    'fin'=> '2025-06-30',
+    'sector'=> 'Informatique',
+    'localisation'=> 'Lyon',
+    'identreprise'=> '1',
+    'idauteur'=> '1'
+])
 
-
+/*
 echo $test->getAllStudent() ;
 echo $test->getStudent(1) ;
 
