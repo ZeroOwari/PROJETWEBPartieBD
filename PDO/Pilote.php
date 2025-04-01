@@ -79,6 +79,31 @@ class Pilote
             return false;
         }
     }
+    public function sessionLog($email, $password) {
+        try {
+            $stmt = $this->pdo->prepare('SELECT `Prenom-pilote`, `Nom-pilote`, `Email-pilote`, `MDP-pilote` FROM pilotepromo WHERE `Email-pilote` = :email');
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+            $stmt->execute();
+            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($this->checkLogValidation([
+                'email' => $email,
+                'password' => $password,
+            ])) {
+                return [
+                    $admin['Prenom-pilote'],
+                    $admin['Nom-pilote'],
+                    $admin['Email-pilote'],
+                    $admin['MDP-pilote']
+                ];
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
 
     public function addPilote($data)
     {

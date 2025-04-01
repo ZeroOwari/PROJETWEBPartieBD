@@ -120,6 +120,35 @@ class Etudiant
         }
     }
 
+    public function sessionLog($email, $password) {
+        try {
+            $stmt = $this->pdo->prepare('SELECT `Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant` FROM etudiant WHERE `Email-etudiant` = :email');
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+            $stmt->execute();
+            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($this->checkLogValidation([
+                'email' => $email,
+                'password' => $password,
+            ])) {
+                return [
+                    $admin['Prenom-etudiant'],
+                    $admin['Nom-etudiant'],
+                    $admin['Email-etudiant'],
+                    $admin['MDP-etudiant'],
+                    $admin['Telephone-etudiant'],
+                    $admin['DateNaissance-etudiant'],
+
+                ];
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+
     public function getAllOffer()
     {
         try {

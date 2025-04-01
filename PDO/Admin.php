@@ -162,6 +162,32 @@ class Admin
         }
     }
 
+    public function sessionLog($email, $password) {
+        try {
+            $stmt = $this->pdo->prepare('SELECT `Prenom-admin`, `Nom-admin`, `Email-admin`, `MDP-admin` FROM admin WHERE `Email-admin` = :email');
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+            $stmt->execute();
+            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($this->checkLogValidation([
+                'email' => $email,
+                'password' => $password,
+            ])) {
+                return [
+                    $admin['Prenom-admin'],
+                    $admin['Nom-admin'],
+                    $admin['Email-admin'],
+                    $admin['MDP-admin']
+                ];
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+
 
 
     #retourne le pilote à l'id indiqué
