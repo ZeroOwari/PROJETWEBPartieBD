@@ -672,26 +672,53 @@ class Pilote
         }
     }
 
-    public function matchingContent($keyword, $location, $type) {
-        if ($this->checkCharacters($keyword)) {
-            return false;
-        }
+    public function matchingContent($keywords = null, $location = null, $type = null) {
         try {
-            #on test tout en mode brut (encore)
-            $stmt = $this->pdo->prepare('SELECT * FROM offrestage WHERE `Nom-offre` LIKE :keyword OR `Description-offre` LIKE :keyword OR `Competences-offre` LIKE :keyword OR `Localisation-offre` LIKE :location OR `Type-offre` LIKE :type');
-            $stmt->bindValue(':keyword', '%' . $keyword . '%', PDO::PARAM_STR);
+            // Start with a base query
+            $sql = 'SELECT * FROM offrestage WHERE 1=1';
+    
+            // Add conditions dynamically based on non-null parameters
+            if (!empty($keywords)) {
+                $sql .= ' AND (`Nom-offre` LIKE :keywords OR `Description-offre` LIKE :keywords OR `Competences-offre` LIKE :keywords)';
+            }
+            if (!empty($location)) {
+                $sql .= ' AND `Localisation-offre` LIKE :location';
+            }
+            if (!empty($type)) {
+                $sql .= ' AND `Type-offre` LIKE :type';
+            }
+    
+            $stmt = $this->pdo->prepare($sql);
+    
+            // Bind parameters only if they are not null
+            if (!empty($keywords)) {
+                $stmt->bindValue(':keywords', '%' . $keywords . '%', PDO::PARAM_STR);
+            }
+            if (!empty($location)) {
+                $stmt->bindValue(':location', '%' . $location . '%', PDO::PARAM_STR);
+            }
+            if (!empty($type)) {
+                $stmt->bindValue(':type', '%' . $type . '%', PDO::PARAM_STR);
+            }
+    
             $stmt->execute();
-            return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            // Return results as JSON
+            return json_encode($results);
         } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage() . "<br>";
             return false;
         }
     }
 
 
+
     #verifie la correspondance email de log / mdp
     public function checkLogValidation($data)
     {
-        if ($this->checkCharacters($data['email']) || $this->checkCharacters($data['password'])) {
+        if (!$this->checkCharacters($data['email']) || !$this->checkCharacters($data['password'])) {
+            echo 'Caracteres invalides.<br>';
             return false;
         }
         try {
@@ -699,12 +726,17 @@ class Pilote
             $stmt->bindParam(':email', $data['email']);
             $stmt->execute();
             $pilote = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($pilote && password_verify(':email', $pilote['MDP-pilote'])) {
+    
+            // Verify the password
+            if ($pilote && password_verify($data['password'], $pilote['MDP-pilote'])) {
+                echo 'Validation.<br>';
                 return true;
             } else {
+                echo 'Email ou mot de passe incorrect.<br>';
                 return false;
             }
         } catch (PDOException $e) {
+            echo "Erreur : " . $e->getMessage() . "<br>";
             return false;
         }
     }

@@ -398,20 +398,26 @@ class Etudiant
     #verifie la correspondance email de log / mdp
     public function checkLogValidation($data)
     {
-        if ($this->checkCharacters($data['email']) || $this->checkCharacters($data['password'])) {
+        if (!$this->checkCharacters($data['email']) || !$this->checkCharacters($data['password'])) {
+            echo 'Caracteres invalides.<br>';
             return false;
         }
         try {
-            $stmt = $this->pdo->prepare('SELECT * FROM pilotepromo WHERE `Email-pilote` = :email');
+            $stmt = $this->pdo->prepare('SELECT * FROM etudiant WHERE `Email-etudiant` = :email');
             $stmt->bindParam(':email', $data['email']);
             $stmt->execute();
-            $pilote = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($pilote && password_verify(':email', $pilote['MDP-pilote'])) {
+            $etudiant = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            // Verify the password
+            if ($etudiant && password_verify($data['password'], $etudiant['MDP-etudiant'])) {
+                echo 'Validation.<br>';
                 return true;
             } else {
+                echo 'Email ou mot de passe incorrect.<br>';
                 return false;
             }
         } catch (PDOException $e) {
+            echo "Erreur : " . $e->getMessage() . "<br>";
             return false;
         }
     }

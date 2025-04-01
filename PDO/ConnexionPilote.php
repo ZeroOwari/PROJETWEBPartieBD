@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("Etudiant.php");
+include("Pilote.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) 
 {
@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password']) && $_POST
     $password = $_POST['password'];
 }
     
-    $db = new Etudiant('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
+    $db = new Pilote('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
 
     if ($db->checkLogValidation([
         'email' => $email,
