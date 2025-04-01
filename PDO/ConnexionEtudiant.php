@@ -1,21 +1,17 @@
 <?php
 session_start();
 include("Etudiant.php");
-echo 'test';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) 
 {
-    $_SESSION['email'] = $_POST['email'];
+    $email = $_POST['email'];
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password']) && $_POST['password']) 
 {
-    $_SESSION['password'] = $_POST['password'];
+    $password = $_POST['password'];
 }
     
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    $db = new Etudiant('mysql:host=localhost;dbname=web4all', 'root', '');
+    $db = new Etudiant('mysql:host=localhost;dbname=web4all', 'TOtime', 'password0508');
     
     if ($db->checkLogValidation([
         'email' => $email,
