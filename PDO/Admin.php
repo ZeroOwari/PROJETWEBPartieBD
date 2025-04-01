@@ -503,11 +503,11 @@ class Admin
     public function addOffer($data)
     {
         if (
-            !$this->checkCharacters($data['name']) ||  !$this->checkCharacters($data['description']) ||  !$this->checkCharacters($data['competences']) ||  !$this->checkCharacters($data['debut']) || !$this->checkCharacters($data['fin']) ||  !$this->checkCharacters($data['sector']) ||  !$this->checkCharacters($data['localisation'])) {
+            !$this->checkCharacters($data['name']) ||  !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['competences']) || !$this->checkCharacters($data['debut']) || !$this->checkCharacters($data['fin']) || !$this->checkCharacters($data['sector']) || !$this->checkCharacters($data['localisation'])
+        ) {
             echo "Invalid characters in input.<br>";
             return false;
         }
-        
     
         if (!is_numeric($data['identreprise']) || !is_numeric($data['idauteur'])) {
             echo "Invalid entreprise or auteur ID.<br>";
@@ -515,6 +515,7 @@ class Admin
         }
     
         try {
+            // Insert into `offrestage`
             $stmt = $this->pdo->prepare('INSERT INTO offrestage (`Nom-offre`, `Description-offre`, `Competences-offre`, `Debut-offre`, `Fin-offre`, `Secteur-offre`, `Localisation-offre`, `ID-entreprise`) VALUES (:name, :description, :competences, :debut, :fin, :sector, :localisation, :identreprise)');
             $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
             $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
@@ -527,8 +528,13 @@ class Admin
     
             $stmt->execute();
     
-            $stmt = $this->pdo->prepare('INSERT INTO Publication (`ID-offre`, `ID-auteur`) VALUES (SELECT `ID-offre` FROM offrestage ORDER BY `ID-offre` DESC LIMIT 1, :idauteur)');
+
+            $offerId = $this->pdo->lastInsertId();
+    
+            $stmt = $this->pdo->prepare('INSERT INTO Publication (`ID-offre`, `ID-auteur`) VALUES (:idoffre, :idauteur)');
+            $stmt->bindParam(':idoffre', $offerId, PDO::PARAM_INT);
             $stmt->bindParam(':idauteur', $data['idauteur'], PDO::PARAM_INT);
+    
             $stmt->execute();
     
             return true;
@@ -679,10 +685,14 @@ class Admin
             $stmt->bindParam(':telephone', $data['telephone'], PDO::PARAM_STR);
             $stmt->bindParam(':note', $data['note'], PDO::PARAM_INT);
             $stmt->bindParam(':path', $data['path'], PDO::PARAM_STR);
-            return $stmt->execute();
+            $stmt->execute();
 
-            $stmt = $this->pdo->prepare('INSERT INTO Ajout (`ID-entreprise`, `ID-auteur`) VALUES (SELECT `ID-entreprise` FROM offrestage ORDER BY `ID-entreprise` DESC LIMIT 1, :idauteur)');
+            $entrepriseId = $this->pdo->lastInsertId();
+
+            $stmt = $this->pdo->prepare('INSERT INTO ajout (`ID-entreprise`, `ID-auteur`) VALUES (:identreprise, :idauteur)');
+            $stmt->bindParam(':identreprise', $entrepriseId, PDO::PARAM_INT);
             $stmt->bindParam(':idauteur', $data['idauteur'], PDO::PARAM_INT);
+    
             $stmt->execute();
 
             return true;

@@ -362,15 +362,14 @@ class Pilote
         }
     }
 
-
     public function addOffer($data)
     {
         if (
-            !$this->checkCharacters($data['name']) ||  !$this->checkCharacters($data['description']) ||  !$this->checkCharacters($data['competences']) ||  !$this->checkCharacters($data['debut']) || !$this->checkCharacters($data['fin']) ||  !$this->checkCharacters($data['sector']) ||  !$this->checkCharacters($data['localisation'])) {
+            !$this->checkCharacters($data['name']) ||  !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['competences']) || !$this->checkCharacters($data['debut']) || !$this->checkCharacters($data['fin']) || !$this->checkCharacters($data['sector']) || !$this->checkCharacters($data['localisation'])
+        ) {
             echo "Invalid characters in input.<br>";
             return false;
         }
-        
     
         if (!is_numeric($data['identreprise']) || !is_numeric($data['idauteur'])) {
             echo "Invalid entreprise or auteur ID.<br>";
@@ -378,6 +377,7 @@ class Pilote
         }
     
         try {
+            // Insert into `offrestage`
             $stmt = $this->pdo->prepare('INSERT INTO offrestage (`Nom-offre`, `Description-offre`, `Competences-offre`, `Debut-offre`, `Fin-offre`, `Secteur-offre`, `Localisation-offre`, `ID-entreprise`) VALUES (:name, :description, :competences, :debut, :fin, :sector, :localisation, :identreprise)');
             $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
             $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
@@ -390,8 +390,14 @@ class Pilote
     
             $stmt->execute();
     
-            $stmt = $this->pdo->prepare('INSERT INTO Publication (`ID-offre`, `ID-auteur`) VALUES (SELECT `ID-offre` FROM offrestage ORDER BY `ID-offre` DESC LIMIT 1, :idauteur)');
+            // Get the last inserted ID for the offer
+            $offerId = $this->pdo->lastInsertId();
+    
+            // Insert into `Publication` table
+            $stmt = $this->pdo->prepare('INSERT INTO Publication (`ID-offre`, `ID-auteur`) VALUES (:idoffre, :idauteur)');
+            $stmt->bindParam(':idoffre', $offerId, PDO::PARAM_INT);
             $stmt->bindParam(':idauteur', $data['idauteur'], PDO::PARAM_INT);
+    
             $stmt->execute();
     
             return true;
@@ -542,10 +548,15 @@ class Pilote
             $stmt->bindParam(':telephone', $data['telephone'], PDO::PARAM_STR);
             $stmt->bindParam(':note', $data['note'], PDO::PARAM_INT);
             $stmt->bindParam(':path', $data['path'], PDO::PARAM_STR);
-            return $stmt->execute();
 
-            $stmt = $this->pdo->prepare('INSERT INTO Ajout (`ID-entreprise`, `ID-auteur`) VALUES (SELECT `ID-entreprise` FROM offrestage ORDER BY `ID-entreprise` DESC LIMIT 1, :idauteur)');
+            $stmt->execute();
+
+            $entrepriseId = $this->pdo->lastInsertId();
+
+            $stmt = $this->pdo->prepare('INSERT INTO ajout (`ID-entreprise`, `ID-auteur`) VALUES (:identreprise, :idauteur)');
+            $stmt->bindParam(':identreprise', $entrepriseId, PDO::PARAM_INT);
             $stmt->bindParam(':idauteur', $data['idauteur'], PDO::PARAM_INT);
+    
             $stmt->execute();
 
             return true;
@@ -691,8 +702,9 @@ class Pilote
 
 $test = new Pilote ('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
 
+/*
 $test->addOffer([
-    'name'=> 'Pentester',
+    'name'=> 'Chef Pentester',
     'description'=> 'Test de sécurité',
     'competences'=> 'Python, C++',
     'debut'=> '2025-01-01',
@@ -701,14 +713,28 @@ $test->addOffer([
     'localisation'=> 'Lyon',
     'identreprise'=> '1',
     'idauteur'=> '1'
-])
+]);
 
-/*
-echo $test->getAllStudent() ;
-echo $test->getStudent(1) ;
-
-echo $test->getPilote(1) ;
-echo $test->getAllPilote() ;
+$test->addCompany([
+    'name'=> 'Ankama',
+    'description'=> 'Société de développement de jeux vidéo',
+    'email'=> 'societe@ankama.com',
+    'telephone'=> '0123456789',
+    'note'=> '5',
+    'path'=> 'images/ankama.png',
+    'idauteur'=> '1'
+]);
 */
+
+echo $test->getAllStudent() ;
+echo $test->getStudentById(1) ;
+
+echo $test->getPiloteById(1) ;
+echo $test->getAllPilote() ;
+
+echo $test->getAllOffer() ;
+echo $test->getOfferById(1) ;
+
+
 
 ?>

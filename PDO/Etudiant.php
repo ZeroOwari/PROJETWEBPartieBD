@@ -265,11 +265,11 @@ class Etudiant
 }
 
 #=====================  Test  =====================
-/*
-$test = new Etudiant ('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
+
+$test = new Etudiant ('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');
 
 echo $test->getAllStudent() ;
-echo $test->getStudent(1) ;
-*/
+echo $test->getStudentById(1) ;
+
 
 ?>
