@@ -291,8 +291,12 @@ class Pilote
         if (!is_array($data)){
             return false;
         }
+        if (is_numeric($data['identreprise'])) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
         try{
-            $stmt = $this->pdo->prepare('SELECT * FROM offrestage WHERE `Nom-offre` = :name AND `Description-offre` = :description AND `Competences-offre` = :competences AND `Debut-offre` = :debut AND `Fin-offre` = :fin AND `Secteur-offre` = :secteur AND `Localisation-offre` = :localisation `ID-entreprise` = :identreprise');
+            $stmt = $this->pdo->prepare('SELECT * FROM offrestage WHERE `Nom-offre` = :name AND `Description-offre` = :description AND `Competences-offre` = :competences AND `Debut-offre` = :debut AND `Fin-offre` = :fin AND `Secteur-offre` = :secteur AND `Localisation-offre` = :localisation AND `Type-offre` = :type');
             $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
             $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
             $stmt->bindParam(':competences', $data['competences'], PDO::PARAM_STR);
@@ -301,6 +305,7 @@ class Pilote
             $stmt->bindParam('sector', $data['sector'], PDO::PARAM_STR);
             $stmt->bindParam(':localisation', $data['localisation'], PDO::PARAM_STR);
             $stmt->bindParam(':identreprise', $data['identreprise'], PDO::PARAM_INT);
+            $stmt->bindParam(':type', $data['type'], PDO::PARAM_STR);
             $stmt->execute();
             return json_encode($stmt->fetch(PDO::FETCH_ASSOC));
         }
@@ -666,6 +671,22 @@ class Pilote
             return false;
         }
     }
+
+    public function matchingContent($keyword, $location, $type) {
+        if ($this->checkCharacters($keyword)) {
+            return false;
+        }
+        try {
+            #on test tout en mode brut (encore)
+            $stmt = $this->pdo->prepare('SELECT * FROM offrestage WHERE `Nom-offre` LIKE :keyword OR `Description-offre` LIKE :keyword OR `Competences-offre` LIKE :keyword OR `Localisation-offre` LIKE :location OR `Type-offre` LIKE :type');
+            $stmt->bindValue(':keyword', '%' . $keyword . '%', PDO::PARAM_STR);
+            $stmt->execute();
+            return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
 
     #verifie la correspondance email de log / mdp
     public function checkLogValidation($data)
