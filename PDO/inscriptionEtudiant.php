@@ -42,6 +42,6 @@ $create->addStudent([
 ]);
 
 // Redirection vers la page d'accueil après l'inscription
-header("Location: accueil.php?inscription=success");
+header("Location: accueil.html?inscription=success");
 exit();
 ?>
