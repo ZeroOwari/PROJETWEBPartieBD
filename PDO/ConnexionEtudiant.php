@@ -1,26 +1,34 @@
 <?php
 session_start();
 include("Etudiant.php");
+echo 'test';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email']) && isset($_POST['password'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) 
+{
+    $_SESSION['email'] = $_POST['email'];
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password']) && $_POST['password']) 
+{
+    $_SESSION['password'] = $_POST['password'];
+}
     
     $email = $_POST['email'];
     $password = $_POST['password'];
-    
-    // Connexion à la base de données
+
     $db = new Etudiant('mysql:host=localhost;dbname=web4all', 'root', '');
     
-    if ($user && password_verify($password, $user['password'])) {
+    if ($db->checkLogValidation([
+        'email' => $email,
+        'password' => $password,
+    ])) {
         // Authentification réussie
-        $_SESSION['email'] = $user['email'];
-
+        $_SESSION['email'] = $email;
+    
         // Redirection vers la page d'accueil
-        header("Location: ../index.php?login=success");
+        //header("Location: ../index.php?login=success");
         exit();
     } else {
-        // Identifiants incorrects
-        header("Location: login.php?error=invalid_credentials");
-        exit();
+        // Authentification échouée
+        echo "Email ou mot de passe incorrect.";
     }
-}
 ?>
