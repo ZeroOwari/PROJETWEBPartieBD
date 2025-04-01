@@ -1,5 +1,5 @@
 <?php 
-include("Etudiant.php");
+include("Pilote.php");
 
 session_start();
 
@@ -28,9 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'&& isset($_POST['Date']))
     $_SESSION['Date'] = $_POST['Date'];
 }
 
-$create = new Etudiant('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
+$create = new Pilote('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
 
-$create->addStudent([
+$create->addPilote([
     'firstname' => $_SESSION['firstname'],
     'lastname' => $_SESSION['name'],
     'email' => $_SESSION['email'],

@@ -421,12 +421,12 @@ class Etudiant
 }
 
 #=====================  Test  =====================
-
+/*
 $test = new Etudiant ('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');
 
 echo $test->getAllStudent() ;
 echo $test->getStudentById(1) ;
-/*
+
 // Test de la fonction postule
 $test = new Etudiant ('mysql:host=localhost;dbname=web4all', 'root', '');
 $id_etudiant = 1; // Remplacez par un ID étudiant valide
