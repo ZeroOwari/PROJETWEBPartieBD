@@ -1,5 +1,5 @@
 <?php 
-sesssion_start();
+session_start();
 
 
 // #=====================  Class Promotion  =====================
@@ -90,7 +90,7 @@ class Promotion {
         
     
         try {
-            $stmt = $this->pdo->prepare('INSERT INTO promotion (`Nom-promo`, `DateDebut-promo`, `DateFin-promo`) VALUES (:nom, :datedebut, :datefin)');
+            $stmt = $this->pdo->prepare('INSERT INTO promotion (`Nom-promo`, `Debut-promo`, `Fin-promo`) VALUES (:nom, :datedebut, :datefin)');
             $stmt->bindParam(':nom', $data['nom'],PDO::PARAM_STR);
             $stmt->bindParam(':datedebut', $data['dateDebut'],PDO::PARAM_STR);
             $stmt->bindParam(':datefin', $data['dateFin'],PDO::PARAM_STR);
@@ -109,7 +109,7 @@ class Promotion {
         
     
         try {
-            $stmt = $this->pdo->prepare('UPDATE promotion SET `Nom-promo` = :nom, `DateDebut-promo` = :datedebut, `DateFin-promo` = :datefin WHERE `ID-promo` = :id');
+            $stmt = $this->pdo->prepare('UPDATE promotion SET `Nom-promo` = :nom, `Debut-promo` = :datedebut, `Fin-promo` = :datefin WHERE `ID-promo` = :id');
             $stmt->bindParam(':nom', $data['nom'],PDO::PARAM_STR);
             $stmt->bindParam(':datedebut', $data['dateDebut'],PDO::PARAM_STR);
             $stmt->bindParam(':datefin', $data['dateFin'],PDO::PARAM_STR);
@@ -122,10 +122,61 @@ class Promotion {
         }
     }
 
+
+    public function deletePromotion($id){
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('DELETE FROM promotion WHERE `ID-promo` = :id');
+            $stmt->bindParam(':id', $id);
+            return $stmt->execute();
+              
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function getAllStudentsByPromotion($id){
+        if (!is_numeric($id) || $id <= 0) {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM etudiant WHERE `ID-promotion-etudiant` = :id');
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            $newjson = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            return $newjson;
+              
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
     public function checkCharacters($string)
     {
-        return preg_match('/^[a-zA-Z0-9_@.]+$/', $string);
+        return preg_match('/^[a-zA-Z0-9_@.\/: -]+$/', $string);
     }
+    
 }
+
+#=====================  Test  =====================
+/*
+$test = new Promotion('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
+
+
+$test->addPromotion([
+    'nom' => 'Promo Test',
+    'dateDebut' => '2023-10-01',
+    'dateFin' => '2023-12-31'
+]);
+
+
+echo $test->getAllPromotions();
+echo $test->getPromotionById(1);
+echo $test->getAllStudentsByPromotion(1);
+*/ 
 
 ?>

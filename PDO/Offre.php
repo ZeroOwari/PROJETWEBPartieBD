@@ -65,12 +65,14 @@ class Offre
             return false;
         }
         try{
-            $stmt = $this->pdo->prepare('SELECT * FROM offrestage WHERE `Nom-offre` = :name AND `Description-offre` = :description AND `Competences-offre` = :competences AND `Debut-offre` = :debut AND `Fin-offre` = :fin AND `ID-entreprise` = :identreprise');
+            $stmt = $this->pdo->prepare('SELECT * FROM offrestage WHERE `Nom-offre` = :name AND `Description-offre` = :description AND `Competences-offre` = :competences AND `Debut-offre` = :debut AND `Fin-offre` = :fin AND `Secteur-offre` = :secteur AND `Localisation-offre` = :localisation `ID-entreprise` = :identreprise');
             $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
             $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
             $stmt->bindParam(':competences', $data['competences'], PDO::PARAM_STR);
             $stmt->bindParam(':debut', $data['debut'], PDO::PARAM_STR);
             $stmt->bindParam(':fin', $data['fin'], PDO::PARAM_STR);
+            $stmt->bindParam('sector', $data['sector'], PDO::PARAM_STR);
+            $stmt->bindParam(':localisation', $data['localisation'], PDO::PARAM_STR);
             $stmt->bindParam(':identreprise', $data['identreprise'], PDO::PARAM_INT);
             $stmt->execute();
             return json_encode($stmt->fetch(PDO::FETCH_ASSOC));
@@ -83,7 +85,7 @@ class Offre
     #modifie les valeurs d'une offre selon son id
     public function updateOffer($id, $data)
     {
-        if (!$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['competences']) || !$this->checkCharacters($data['debut']) || !$this->checkCharacters($data['fin']) || !$this->checkCharacters($data['identreprise'])
+        if (!$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['competences']) || !$this->checkCharacters($data['debut']) || !$this->checkCharacters($data['fin']) ||  !$this->checkCharacters($data['sector']) ||  !$this->checkCharacters($data['localisation']) || !$this->checkCharacters($data['identreprise'])
         ) {
             return false;
         }
@@ -92,12 +94,14 @@ class Offre
             return false;
         }
         try {
-            $stmt = $this->pdo->prepare('UPDATE offrestage SET `Nom-offre` = :name, `Description-offre` = :description, `Competences-offre` = :competences, `Debut-offre` = :debut, `Fin-offre` = :fin WHERE `ID-entreprise` = :identreprise');
+            $stmt = $this->pdo->prepare('UPDATE offrestage SET `Nom-offre` = :name, `Description-offre` = :description, `Competences-offre` = :competences, `Debut-offre` = :debut, `Fin-offre` = :fin, `Secteur-offre` = :sector, `Localisation-offre` = :loacalisation WHERE `ID-entreprise` = :identreprise');
             $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
             $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
             $stmt->bindParam(':competences', $data['competences'], PDO::PARAM_STR);
             $stmt->bindParam(':debut', $data['debut'], PDO::PARAM_STR);
             $stmt->bindParam(':fin', $data['fin'], PDO::PARAM_STR);
+            $stmt->bindParam('sector', $data['sector'], PDO::PARAM_STR);
+            $stmt->bindParam(':localisation', $data['localisation'], PDO::PARAM_STR);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
@@ -108,17 +112,24 @@ class Offre
 
     public function addOffer($data)
     {
-        if (!$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['competences']) || !$this->checkCharacters($data['debut']) || !$this->checkCharacters($data['fin']) || !$this->checkCharacters($data['identreprise'])
-        ) {
+        if (
+            !$this->checkCharacters($data['name']) || !$this->checkCharacters($data['description']) || !$this->checkCharacters($data['competences']) || !$this->checkCharacters($data['debut']) || !$this->checkCharacters($data['fin']) || !$this->checkCharacters($data['sector']) || !$this->checkCharacters($data['localisation']) )
+        {
+            return false;
+        }
+        if (!is_numeric($data['identreprise']) ) {
+            
             return false;
         }
         try {
-            $stmt = $this->pdo->prepare('INSERT INTO offrestage (`Nom-offre`, `Description-offre`, `Competences-offre`, `Debut-offre`, `Fin-offre`, `ID-entreprise`) VALUES (:name, :description, :competences, :debut, :fin, :identreprise)');
+            $stmt = $this->pdo->prepare('INSERT INTO offrestage (`Nom-offre`, `Description-offre`, `Competences-offre`, `Debut-offre`, `Fin-offre`, `Secteur-offre`, `Localisation-offre`, `ID-entreprise`) VALUES (:name, :description, :competences, :debut, :fin, :sector, :localisation, :identreprise)');
             $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
             $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
             $stmt->bindParam(':competences', $data['competences'], PDO::PARAM_STR);
             $stmt->bindParam(':debut', $data['debut'], PDO::PARAM_STR);
             $stmt->bindParam(':fin', $data['fin'], PDO::PARAM_STR);
+            $stmt->bindParam(':sector', $data['sector'], PDO::PARAM_STR); // Fixed missing colon
+            $stmt->bindParam(':localisation', $data['localisation'], PDO::PARAM_STR);
             $stmt->bindParam(':identreprise', $data['identreprise'], PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
@@ -145,7 +156,7 @@ class Offre
     #verif des caracteres speciaux
     public function checkCharacters($string)
     {
-        return preg_match('/^[a-zA-Z0-9_@.]+$/', $string);
+        return preg_match('/^[\p{L}\p{N}_@.\/: \-,]+$/u', $string);
     }
 
 
@@ -153,7 +164,20 @@ class Offre
 
 $test = new Offre('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
 
-echo $test->getAllOffer();
-echo $test->getOfferById(1) ;
+/*
+$test->addOffer([
+    'name'=> 'Developpeur PHP',
+    'description'=> 'Developpeur PHP pour un stage de 6 mois',
+    'competences'=> 'PHP, MySQL, HTML, CSS',
+    'debut'=> '2025-01-01',
+    'fin'=> '2025-06-30',
+    'sector'=> 'Informatique',
+    'localisation'=> 'Lille',
+    'identreprise'=> '3',
+]);
+*/
+
+//echo $test->getAllOffer();
+echo $test->getOfferById(6) ;
 
 ?>

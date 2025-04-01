@@ -170,7 +170,7 @@ class Admin
     #verif des caracteres speciaux
     public function checkCharacters($string)
     {
-        return preg_match('/^[a-zA-Z0-9_@.]+$/', $string);
+        return preg_match('/^[a-zA-Z0-9_@.\/: -]+$/', $string);
     }
 
     public function addStudent($data){
@@ -398,6 +398,7 @@ class Admin
 
 #=====================  Tests  =====================
 
+/*
 $test = new Admin('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
 
 echo $test->getAdmin(1);
@@ -410,7 +411,6 @@ echo $test->getAllPilote();
 echo $test->getPilote(1);
 
 
-/*
 $test->addStudent([
     'firstname' => 'Totime',
     'lastname' => 'VC',
@@ -418,7 +418,7 @@ $test->addStudent([
     'password' => 'password123',
     'telephone' => '0631569513',
     'date' => '2005-08-05',
-    'idcv' => '1',
+    'path' => '1',
     'idpromo' => '1'
 ]);
 $test->updateStudent(1,[
@@ -428,7 +428,7 @@ $test->updateStudent(1,[
     'password' => 'password123',
     'telephone' => '0631569513',
     'date' => '2005-08-05',
-    'idcv' => '1',
+    'path' => '1',
     'idpromo' => '1'
 ]);
 

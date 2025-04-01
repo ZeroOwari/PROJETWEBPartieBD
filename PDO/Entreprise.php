@@ -152,6 +152,28 @@ class Entreprise
         }
     }
 
+    public function pagination($page = 1, $limit = 10)
+    {
+        if (!is_numeric($page) || $page <= 0) {
+            echo 'Page invalide.<br>';
+            return false;
+        }
+        if (!is_numeric($limit) || $limit <= 0) {
+            echo 'Limite invalide.<br>';
+            return false;
+        }
+        try {
+            $offset = ($page - 1) * $limit;
+            $stmt = $this->pdo->prepare('SELECT * FROM entreprise ORDER BY `` LIMIT :offset, :limit');
+            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+            return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
 
     #verif des caracteres speciaux
     public function checkCharacters($string)

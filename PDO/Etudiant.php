@@ -132,15 +132,17 @@ class Etudiant
         #verif des caracteres speciaux
         public function checkCharacters($string)
         {
-            return preg_match('/^[a-zA-Z0-9_@.]+$/', $string);
+            return preg_match('/^[a-zA-Z0-9_@.\/: -]+$/', $string);
         }
     
 }
 
 #=====================  Test  =====================
+/*
 $test = new Etudiant ('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
 
 echo $test->getAllStudent() ;
 echo $test->getStudent(1) ;
+*/
 
 ?>

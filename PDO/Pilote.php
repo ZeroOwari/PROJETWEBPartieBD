@@ -245,7 +245,7 @@ class Pilote
     #verif des caracteres speciaux
     public function checkCharacters($string)
     {
-        return preg_match('/^[a-zA-Z0-9_@.]+$/', $string);
+        return preg_match('/^[a-zA-Z0-9_@.\/: -]+$/', $string);
     }
 
 
@@ -253,6 +253,7 @@ class Pilote
 }
 
 #=====================  Test  =====================
+/*
 $test = new Pilote ('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
 
 
@@ -262,5 +263,6 @@ echo $test->getStudent(1) ;
 
 echo $test->getPilote(1) ;
 echo $test->getAllPilote() ;
+*/
 
 ?>
