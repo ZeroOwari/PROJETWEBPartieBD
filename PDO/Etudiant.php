@@ -336,7 +336,48 @@ class Etudiant
     {
         return preg_match('/^[\p{L}\p{N}_@.\/: \-,+]+$/u', $string);
     }
-    
+
+    public function postule($id_etudiant, $id_offre, $datepostule)
+    {
+        if (!$this->checkCharacters($datepostule)) {
+            echo 'Caracteres invalides.<br>';
+            return false;
+        }
+        if (!is_numeric($id_etudiant) || $id_etudiant <= 0 || !is_numeric($id_offre) || $id_offre <= 0) 
+        {
+            echo 'ID invalide.<br>';
+            return false;
+        }
+
+        try 
+        {
+            // Vérifier si l'étudiant a déjà postulé à cette offre
+            $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM postule WHERE `ID-etudiant` = :id_etudiant AND `ID-offre` = :id_offre');
+            $stmt->bindParam(':id_etudiant', $id_etudiant, PDO::PARAM_INT);
+            $stmt->bindParam(':id_offre', $id_offre, PDO::PARAM_INT);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+
+            if ($count > 0) 
+            {
+                echo "L'étudiant a déjà postulé à cette offre.<br>";
+                return false;
+            }
+
+            $stmt = $this->pdo->prepare('INSERT INTO postule (`ID-etudiant`, `ID-offre`, `Date-postule`) VALUES (:id_etudiant, :id_offre, :datepostule)');
+            $stmt->bindParam(':id_etudiant', $id_etudiant, PDO::PARAM_INT);
+            $stmt->bindParam(':id_offre', $id_offre, PDO::PARAM_INT);
+            $stmt->bindParam(':datepostule', $datepostule, PDO::PARAM_STR);
+            return $stmt->execute();
+
+        } 
+        catch (PDOException $e) 
+        {
+            echo "Erreur: " . $e->getMessage() . "<br>";
+            return false;
+        }
+    }
+
 }
 
 #=====================  Test  =====================
@@ -345,6 +386,15 @@ $test = new Etudiant ('mysql:host=localhost;dbname=web4all', 'website_user', 'kx
 
 echo $test->getAllStudent() ;
 echo $test->getStudentById(1) ;
-
-
-?>
+/*
+// Test de la fonction postule
+$test = new Etudiant ('mysql:host=localhost;dbname=web4all', 'root', '');
+$id_etudiant = 1; // Remplacez par un ID étudiant valide
+$id_offre = 2;    // Remplacez par un ID offre valide
+if ($test->postule($id_etudiant, $id_offre, '2023-10-01')) {
+    echo "Candidature ajoutée avec succès.<br>";
+} else {
+    echo "Échec de l'ajout de la candidature.<br>"; 
+}
+*/
+?>  
