@@ -89,12 +89,49 @@ function getCompanyCount(){
     }
 }
 
-#=====================  Test  ====================
+function getUploadCompanyCount(){
+    try {
+        $pdo = new PDO('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-echo getCompanyCount();
-echo getOfferCount();
-echo getAminCount();
-echo getPiloteCount();
+
+        $stmt = $pdo->prepare('SELECT COUNT(*) AS uploadcompany_count FROM ajout');
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $result['uploadcompany_count'];
+    } catch (PDOException $e) {
+
+        return 'Error: ' . $e->getMessage();
+    }
+}
+
+function getUploadOfferCount(){
+    try {
+        $pdo = new PDO('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+
+        $stmt = $pdo->prepare('SELECT COUNT(*) AS uploadoffer_count FROM publication');
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $result['uploadoffer_count'];
+    } catch (PDOException $e) {
+
+        return 'Error: ' . $e->getMessage();
+    }
+}
+
+#=====================  Test  ====================
+echo getUploadCompanyCount(); echo '<br>';
+echo getUploadOfferCount(); echo '<br>';
+echo getCompanyCount(); echo '<br>';
+echo getOfferCount(); echo '<br>';
+echo getAminCount(); echo '<br>';
+echo getPiloteCount(); echo '<br>';
 echo getStudentCount();
 
 ?>
