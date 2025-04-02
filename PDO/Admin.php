@@ -358,7 +358,7 @@ class Admin
         
     
         try {
-            $stmt = $this->pdo->prepare('INSERT INTO etudiant (`Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant`, `Chemin-CV`, `ID-promotion-etudiant`) VALUES (:firstname, :lastname, :email, :password, :telephone, :date, :pathcv, :idpromo)');
+            $stmt = $this->pdo->prepare('INSERT INTO etudiant (`Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant`, `Chemin-CV`, `ID-promotion-etudiant`, `Stage-etudiant`) VALUES (:firstname, :lastname, :email, :password, :telephone, :date, :pathcv, :idpromo, :stage)');
             $stmt->bindParam(':firstname', $data['firstname'],PDO::PARAM_STR);
             $stmt->bindParam(':lastname', $data['lastname'],PDO::PARAM_STR);
             $stmt->bindParam(':email', $data['email'],PDO::PARAM_STR);
@@ -368,6 +368,7 @@ class Admin
             $stmt->bindParam(':date', $data['date'],PDO::PARAM_STR);
             $stmt->bindParam(':pathcv', $data['pathcv'],PDO::PARAM_STR);
             $stmt->bindParam('idpromo', $data['idpromo'],PDO::PARAM_STR);
+            $stmt->bindParam(':stage', $data['stage'],PDO::PARAM_BOOL);
             $stmt->execute();
         } catch (PDOException $e) {
             echo "Erreur: " . $e->getMessage() . "<br>";
@@ -401,7 +402,7 @@ class Admin
             return false;
         }
         try {
-            $stmt = $this->pdo->prepare('UPDATE etudiant SET `Prenom-etudiant` = :firstname, `Nom-etudiant` = :lastname, `Email-etudiant` = :email, `MDP-etudiant` = :password, `Telephone-etudiant` = :telephone, `DateNaissance-etudiant` = :date, `Chamin-CV` = :pathcv, `ID-promotion-etudiant` = :idpromo WHERE `ID-etudiant` = :id');
+            $stmt = $this->pdo->prepare('UPDATE etudiant SET `Prenom-etudiant` = :firstname, `Nom-etudiant` = :lastname, `Email-etudiant` = :email, `MDP-etudiant` = :password, `Telephone-etudiant` = :telephone, `DateNaissance-etudiant` = :date, `Chamin-CV` = :pathcv, `ID-promotion-etudiant` = :idpromo, `Stage-etudiant` = :stage WHERE `ID-etudiant` = :id');
             $stmt->bindParam(':firstname', $data['firstname'], PDO::PARAM_STR);
             $stmt->bindParam(':lastname', $data['lastname'], PDO::PARAM_STR);
             $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
@@ -412,6 +413,7 @@ class Admin
             $stmt->bindParam(':date', $data['date']);
             $stmt->bindParam(':pathcv', $data['pathcv'],PDO::PARAM_STR);
             $stmt->bindParam('idpromo', $data['idpromo']);
+            $stmt->bindParam(':stage', $data['stage'],PDO::PARAM_BOOL);
             return $stmt->execute();
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage() . "<br>";

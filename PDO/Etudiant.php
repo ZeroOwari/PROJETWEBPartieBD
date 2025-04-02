@@ -50,7 +50,7 @@ class Etudiant
         
     
         try {
-            $stmt = $this->pdo->prepare('INSERT INTO etudiant (`Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant`, `Chemin-CV`, `ID-promotion-etudiant`) VALUES (:firstname, :lastname, :email, :password, :telephone, :date, :pathcv, :idpromo)');
+            $stmt = $this->pdo->prepare('INSERT INTO etudiant (`Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant`, `Chemin-CV`, `ID-promotion-etudiant`, `Stage-etudiant`) VALUES (:firstname, :lastname, :email, :password, :telephone, :date, :pathcv, :idpromo, :stage)');
             $stmt->bindParam(':firstname', $data['firstname'],PDO::PARAM_STR);
             $stmt->bindParam(':lastname', $data['lastname'],PDO::PARAM_STR);
             $stmt->bindParam(':email', $data['email'],PDO::PARAM_STR);
@@ -60,6 +60,7 @@ class Etudiant
             $stmt->bindParam(':date', $data['date'],PDO::PARAM_STR);
             $stmt->bindParam(':pathcv', $data['pathcv'],PDO::PARAM_STR);
             $stmt->bindParam('idpromo', $data['idpromo'],PDO::PARAM_STR);
+            $stmt->bindParam(':stage', $data['stage'],PDO::PARAM_BOOL);
             $stmt->execute();
         } catch (PDOException $e) {
             echo "Erreur: " . $e->getMessage() . "<br>";

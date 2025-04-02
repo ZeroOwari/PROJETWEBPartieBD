@@ -17,6 +17,23 @@ function getStudentCount() {
     }
 }
 
+function getStudentCountByPromo($promo) {
+    try {
+        $pdo = new PDO('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $stmt = $pdo->prepare('SELECT COUNT(*) AS student_count FROM etudiant JOIN promotion ON promotion.`ID-promo` = etudiant.`ID-promotion-etudiant` WHERE `Nom-promo` = :promo AND `Stage-etudiant` = 1');
+        $stmt->bindParam(':promo', $promo);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['student_count'];
+    } 
+    catch (PDOException $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+}
+
 function getPiloteCount() {
     try {
         $pdo = new PDO('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');
@@ -125,6 +142,24 @@ function getUploadOfferCount(){
     }
 }
 
+function getHasInternshipCount(){
+    try {
+        $pdo = new PDO('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+
+        $stmt = $pdo->prepare('SELECT COUNT(*) AS stage_count FROM etudiant WHERE `Stage-etudiant` = 1');
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $result['stage_count'];
+    } catch (PDOException $e) {
+
+        return 'Error: ' . $e->getMessage();
+    }
+}
+
 #=====================  Test  ====================
 echo getUploadCompanyCount(); echo '<br>';
 echo getUploadOfferCount(); echo '<br>';
@@ -132,6 +167,10 @@ echo getCompanyCount(); echo '<br>';
 echo getOfferCount(); echo '<br>';
 echo getAminCount(); echo '<br>';
 echo getPiloteCount(); echo '<br>';
-echo getStudentCount();
+echo getStudentCount(); echo '<br>';
+echo getHasInternshipCount(); echo '<br>';
+echo getStudentCountByPromo('Informatique'); echo '<br>';
+echo getStudentCountByPromo('BTP'); echo '<br>';
+echo getStudentCountByPromo('Généraliste'); echo '<br>';
 
 ?>

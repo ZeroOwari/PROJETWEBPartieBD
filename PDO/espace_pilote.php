@@ -1,3 +1,4 @@
+<?php include ("Pilote.php"); ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -45,38 +46,40 @@
     </div>
 
     <div class="promo">
-        <div class="promo-item">
-            <button class="toggle-btn">INFORMATIQUE <span>➖</span></button>
-            <ul class="eleve-list visible">
-                <li>DUBOIS | Quentin</li>
-                <li>VAN CAMP | Théotime</li>
-                <li>WATTEZ | Lucas</li>
-                <li>MAGNIER | Clément</li>
-                <li>TAVERNE | Simon</li>
-            </ul>
-        </div>
 
-        <div class="promo-item">
-            <button class="toggle-btn">BTP <span>➖</span></button>
-            <ul class="eleve-list visible">
-                <li>DOUZENEL | Louise</li>
-            </ul>
-        </div>
+<?php
+    $db = new Pilote('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');    
+    $promos = json_decode($db->getAllPromotions());
 
-        <div class="promo-item">
-            <button class="toggle-btn">Généraliste <span>➕</span></button>
-            <ul class="eleve-list">
-                <li>Élève A</li>
-                <li>Élève B</li>
-                <li>Élève B</li>
-                <li>Élève B</li>
-                <li>Élève B</li>
-                <li>Élève B</li>
-                <li>Élève B</li>
+    if (is_array($promos)) {
+        foreach ($promos as $promo) {
+            echo '<div class="promo-item">';
+            echo '<button class="toggle-btn">';
+            echo htmlspecialchars($promo->{"Nom-promo"});
+            echo '<span>➕</span></button>';
+            echo '<ul class="eleve-list">';
 
-            </ul>
-        </div>
-    </div>
+            $students = json_decode($db->getStudentByPromo($promo->{"ID-promo"}));
+
+            if (is_array($students) && !empty($students)) {
+                foreach ($students as $student) {
+                    echo '<li>' . htmlspecialchars($student->{"Prenom-etudiant"}) . ' | ' . htmlspecialchars($student->{"Nom-etudiant"}) . '</li>';
+                }
+            } else {
+                echo '<li>Aucun étudiant trouvé pour cette promotion.</li>';
+            }
+
+            echo '</ul>';
+            echo '</div>';
+        }
+    } else {
+        echo '<p>Erreur : Impossible de récupérer les promotions.</p>';
+    }
+?>
+
+    
+
+
     <script src="../controler/espace_pilote.js"></script>
 </div>
     <div class="wrapper">
