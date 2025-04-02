@@ -12,6 +12,7 @@
         <div class="filter-item">
             <label for="nbrOffer">Nombre d'offres</label>
             <select id="nbrOffer" name="nbrOffer">
+                <option value="">Changer le nombre d'offre</option>
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
