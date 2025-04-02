@@ -22,7 +22,7 @@
   </form>
 
   <?php
-    include("pagination.php");
+    include("afficheEntreprise.php");
   ?>
 
 <script src="page_de_recherche_jvsc.js"></script>

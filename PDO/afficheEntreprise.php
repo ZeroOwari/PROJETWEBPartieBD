@@ -1,15 +1,32 @@
 <?php
-function printPagination($pagination) {
 
-    // Decode the JSON string into an array
-    $pagination = json_decode($pagination, true);
+include("Search.php");
+
+function printPagination($itemPerPage, $offre) {
+
+    $offre = json_decode($offre, true);
+
+    // Check if decoding was successful
+    if (!is_array($offre)) {
+        die("Erreur : Les données fournies ne sont pas valides.");
+    }
+
+    $TotalElem = count($offre);
+    $NbPages = ceil($TotalElem / $itemPerPage);
+    $page = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 && $_GET['page'] <= $NbPages ? (int)$_GET['page'] : 1;
+
+    $Page_Slice = [];
+    for ($page = 1; $page <= $NbPages; $page++) {
+        $start = ($page - 1) * $itemPerPage;
+        $Page_Slice[] = array_slice($offre, $start, $itemPerPage);
+    }
 
     // Check if the JSON decoding was successful
-    if (!is_array($pagination)) {
+    if (!is_array($Page_Slice)) {
         die("Erreur : La pagination n'a pas retourné un tableau valide.");
     }
 
-    foreach ($pagination as $offres) {
+    foreach ($Page_Slice as $offres) {
         // Check if there are offers to display
         if (!empty($offres)) {
             echo "<div class='container'>";
@@ -73,11 +90,29 @@ function printPagination($pagination) {
                 echo "</div>"; // End .Base-page_de_recherche
             }
             echo "</div>"; // End .container
+
         } else {
             echo "<p>Aucune entreprise à afficher.</p>";
         }
     }
+
+    echo "<div class = 'pagination'>";
+    if ($page > 1) {
+        echo '<a href="?page='.($page - 1).'" class="button">Précédent</a> ';
+    }
+    if ($page < $NbPages) {
+        echo '<a href="?page='.($page + 1).'" class="button">Suivant</a>';
+    }
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nbrOffer'])) {
+    $limit = $_POST['nbrOffer']; 
+} 
+else {
+    $limit = 1; // Valeur par défaut
+}
+
+printPagination($limit, $recherche);
 
 
 ?>
