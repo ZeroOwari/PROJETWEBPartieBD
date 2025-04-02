@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web4ALL espace pilote</title>
-    <link rel="stylesheet" href="assets/style-web.css">
+    <link rel="stylesheet" href="style-web.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="body">
@@ -80,7 +80,7 @@
     
 
 
-    <script src="../controler/espace_pilote.js"></script>
+    <script src="espace_pilote.js"></script>
 </div>
     <div class="wrapper">
     <h2 class="titre-connexion-purple">Statistiques des Stages</h2>
@@ -95,7 +95,7 @@
         <button class="filter" data-filter="informatique">Informatique</button>
         <button class="filter" data-filter="generaliste">Généraliste</button>
     </div>
-        <script src="../controler/espace_pilote_pourc.js"></script>
+        <script src="espace_pilote_pourc.php"></script>
     </div>
 </div>
 <footer>
