@@ -28,5 +28,7 @@
     } else {
         // Authentification échouée
         echo "Email ou mot de passe incorrect.";
+        session_destroy(); // Détruire la session en cas d'échec
+        header("Location: connexion-pil.html?login=failed");
     }
 ?>

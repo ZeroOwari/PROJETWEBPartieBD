@@ -26,10 +26,11 @@
         echo "Votre telephone est : " . $_SESSION['telephone'] . "<br>";
     
         // Redirection vers la page d'accueil
-        //header("Location: accueil.html?login=success");
+        header("Location: accueil.html?login=success");
         exit();
     } else {
         // Authentification échouée
-        echo "Email ou mot de passe incorrect.";
+        session_destroy(); // Détruire la session en cas d'échec
+        header("Location: connexion-etu.html?login=failed");
     }
 ?>
