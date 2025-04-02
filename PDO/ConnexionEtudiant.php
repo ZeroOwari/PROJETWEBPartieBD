@@ -11,7 +11,7 @@
         $password = $_POST['password'];
     }
     
-    $db = new Etudiant('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
+    $db = new Etudiant('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');
 
     if ($session = $db->sessionLog($email , $password)){
         // Authentification réussie
@@ -26,10 +26,11 @@
         echo "Votre telephone est : " . $_SESSION['telephone'] . "<br>";
     
         // Redirection vers la page d'accueil
-        //header("Location: accueil.html?login=success");
+        header("Location: accueil.html?login=success");
         exit();
     } else {
         // Authentification échouée
-        echo "Email ou mot de passe incorrect.";
+        session_destroy(); // Détruire la session en cas d'échec
+        header("Location: connexion-etu.html?login=failed");
     }
 ?>

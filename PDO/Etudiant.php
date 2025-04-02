@@ -50,7 +50,7 @@ class Etudiant
         
     
         try {
-            $stmt = $this->pdo->prepare('INSERT INTO etudiant (`Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant`, `Chemin-CV`, `ID-promotion-etudiant`) VALUES (:firstname, :lastname, :email, :password, :telephone, :date, :pathcv, :idpromo)');
+            $stmt = $this->pdo->prepare('INSERT INTO etudiant (`Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant`, `Chemin-CV`, `ID-promotion-etudiant`, `Stage-etudiant`) VALUES (:firstname, :lastname, :email, :password, :telephone, :date, :pathcv, :idpromo, :stage)');
             $stmt->bindParam(':firstname', $data['firstname'],PDO::PARAM_STR);
             $stmt->bindParam(':lastname', $data['lastname'],PDO::PARAM_STR);
             $stmt->bindParam(':email', $data['email'],PDO::PARAM_STR);
@@ -60,6 +60,7 @@ class Etudiant
             $stmt->bindParam(':date', $data['date'],PDO::PARAM_STR);
             $stmt->bindParam(':pathcv', $data['pathcv'],PDO::PARAM_STR);
             $stmt->bindParam('idpromo', $data['idpromo'],PDO::PARAM_STR);
+            $stmt->bindParam(':stage', $data['stage'],PDO::PARAM_BOOL);
             $stmt->execute();
         } catch (PDOException $e) {
             echo "Erreur: " . $e->getMessage() . "<br>";
@@ -122,7 +123,7 @@ class Etudiant
 
     public function sessionLog($email, $password) {
         try {
-            $stmt = $this->pdo->prepare('SELECT `Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant` FROM etudiant WHERE `Email-etudiant` = :email');
+            $stmt = $this->pdo->prepare('SELECT * FROM etudiant WHERE `Email-etudiant` = :email');
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
             $stmt->execute();
             $admin = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -387,7 +388,7 @@ class Etudiant
     public function matchingContent($keywords = null, $location = null, $type = null) {
         try {
             // Start with a base query
-            $sql = 'SELECT * FROM offrestage WHERE 1=1';
+            $sql = 'SELECT * FROM offrestage JOIN entreprise ON offrestage.`ID-entreprise` = entreprise.`ID-entreprise` WHERE 1=1';
     
             // Add conditions dynamically based on non-null parameters
             if (!empty($keywords)) {
@@ -399,6 +400,12 @@ class Etudiant
             if (!empty($type)) {
                 $sql .= ' AND `Type-offre` LIKE :type';
             }
+    
+            // Add ORDER BY clause
+            $sql .= ' ORDER BY `ID-offre` DESC';
+    
+            // Debugging: Output the final SQL query
+            // echo $sql;
     
             $stmt = $this->pdo->prepare($sql);
     

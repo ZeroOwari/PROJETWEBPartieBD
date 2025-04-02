@@ -11,7 +11,7 @@
         $password = $_POST['password'];
     }
     
-    $db = new Pilote('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
+    $db = new Pilote('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');
 
     if ($session = $db->sessionLog($email , $password)){
         // Authentification réussie
@@ -28,5 +28,7 @@
     } else {
         // Authentification échouée
         echo "Email ou mot de passe incorrect.";
+        session_destroy(); // Détruire la session en cas d'échec
+        header("Location: connexion-pil.html?login=failed");
     }
 ?>
