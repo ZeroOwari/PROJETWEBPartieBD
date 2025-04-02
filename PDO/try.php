@@ -9,7 +9,7 @@
     <body class="body_Page_de_recherche">
 
     <form method="post" >
-        <div class="filter-item">
+        <div class="pagination">
             <label for="nbrOffer">Nombre d'offres</label>
             <select id="nbrOffer" name="nbrOffer">
                 <option value="">Changer le nombre d'offre</option>
@@ -18,15 +18,16 @@
                 <option value="20">20</option>
                 <option value="50">50</option>
             </select>
+            <button type="submit" value="submit" class="button">Appliquer</button>
         </div>
-        <button type="submit" value="submit">Appliquer</button>
+  
   </form>
 
   <?php
     include("afficheEntreprise.php");
   ?>
 
-<script src="page_de_recherche_jvsc.js"></script>
+<script src="java.js"></script>
 </body>
 </html>
 

@@ -24,7 +24,7 @@ function printPagination($itemPerPage, $offre) {
 
     // Display the offers for the current page
     if (!empty($Page_Slice)) {
-        echo "<div class='container'>";
+        echo "<div class='container'>"; // Open container div
         foreach ($Page_Slice as $offre) {
             // Secure variables against XSS
             $nom = htmlspecialchars($offre['Nom-offre']);
@@ -34,7 +34,6 @@ function printPagination($itemPerPage, $offre) {
             $competence = htmlspecialchars($offre['Competences-offre']);
             $debut = htmlspecialchars($offre['Debut-offre']);
             $fin = htmlspecialchars($offre['Fin-offre']);
-            $identreprise = htmlspecialchars($offre['ID-entreprise']);
             $nomEntreprise = htmlspecialchars($offre['Nom-entreprise']);
             $logo = htmlspecialchars($offre['CheminImage-entreprise']);
             $descriptionEntreprise = htmlspecialchars($offre['Description-entreprise']);
@@ -53,7 +52,7 @@ function printPagination($itemPerPage, $offre) {
 
             echo "<div class='carre_description_page_de_recherche'>$description</div>";
             echo "<div class='carre_localisation_page_de_recherche'>$ville</div>";
-            echo "<div class='carre_nom_de_lentreprise_page_de_recherche'>$nom</div>";
+            echo "<div class='carre_nom_de_lentreprise_page_de_recherche'>$nomEntreprise</div>";
             echo "<button class='btn' onclick='ouvrirPopup(\"popup_$entreprise_id\")'></button>";
 
             // Popup for the offer with skills
@@ -63,12 +62,20 @@ function printPagination($itemPerPage, $offre) {
             echo "<div class='carre_noir'>$nom</div>";
 
             echo "<div class='logo_de_l_entreprise_popup'><img width='150' src='$logo'></div>";
-            echo "<div class='nom_de_l_entreprise_popup'>$nom :</div>";
-            echo "<div class='ville_popup'>$ville</div>";
+            echo "<div class='nom_de_l_entreprise_popup'>$nomEntreprise :</div>";
+            echo "<div class='titre_a_propos_de_l_entreprise_popup'>Date début : </div>";
+            echo "<div class='competence_popup'> Date de publication :   $debut</div>";
+            echo "<div class='titre_a_propos_de_l_entreprise_popup'>Date fin : </div>";
+            echo "<div class='competence_popup'>Date de fin :  $fin</div>";
+            echo "<div class='titre_a_propos_de_l_entreprise_popup'>Secteur d'activité : </div>";
+            echo "<div class='competence_popup'>Secteur :  $secteur</div>";
+            echo "<div class='titre_a_propos_de_l_entreprise_popup'>A Propos De l'Entreprise</div>";
+            echo "<div class='competence_popup'>Localisation :  $ville</div>";
             echo "<div class='Qualification_popup'>Qualification :</div>";
+            echo "<div class='competence_popup'>$competence</div>";
 
             echo "<div class='titre_a_propos_de_l_entreprise_popup'>A Propos De l'Entreprise</div>";
-            echo "<div class='texte_a_propos_de_l_entreprise_popup'>$descriptionEntreprise</div>";
+            echo "<div class='competence_popup'>$descriptionEntreprise</div>";
 
             echo "</div>";
             echo "<div class='modal-footer'></div>";
@@ -92,10 +99,10 @@ function printPagination($itemPerPage, $offre) {
     // Display pagination buttons
     echo "<div class='pagination'>";
     if ($page > 1) {
-        echo '<a href="?page=' . ($page - 1) . '" class="button">Précédent</a> ';
+        echo '<a href="?page=' . ($page - 1) . '">Précédent</a> ';
     }
     if ($page < $NbPages) {
-        echo '<a href="?page=' . ($page + 1) . '" class="button">Suivant</a>';
+        echo '<a href="?page=' . ($page + 1) . '">Suivant</a>';
     }
     echo "</div>";
 }
@@ -104,10 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nbrOffer']) && $_POST
     $limit = $_POST['nbrOffer']; 
 } 
 else {
-    $limit = 6; // Valeur par défaut
+    $limit = 1; // Valeur par défaut
 }
 
 printPagination($limit, $recherche);
-
 
 ?>
