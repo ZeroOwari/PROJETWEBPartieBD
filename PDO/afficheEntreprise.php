@@ -1,6 +1,5 @@
 <?php
-function printPagination($limit) {
-    $pagination = pagination($limit);
+function printPagination($pagination) {
 
     // Decode the JSON string into an array
     $pagination = json_decode($pagination, true);

@@ -122,7 +122,7 @@ class Etudiant
 
     public function sessionLog($email, $password) {
         try {
-            $stmt = $this->pdo->prepare('SELECT `Prenom-etudiant`, `Nom-etudiant`, `Email-etudiant`, `MDP-etudiant`, `Telephone-etudiant`, `DateNaissance-etudiant` FROM etudiant WHERE `Email-etudiant` = :email');
+            $stmt = $this->pdo->prepare('SELECT * FROM etudiant WHERE `Email-etudiant` = :email');
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
             $stmt->execute();
             $admin = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -387,8 +387,8 @@ class Etudiant
     public function matchingContent($keywords = null, $location = null, $type = null) {
         try {
             // Start with a base query
-            $sql = 'SELECT * FROM offrestage WHERE 1=1';
-    
+            $sql = 'SELECT * FROM offrestage JOIN entreprise ON offrestage.`ID-entreprise` = entreprise.`ID-entreprise` WHERE 1=1 ORDER BY `ID-offre` DESC';
+            
             // Add conditions dynamically based on non-null parameters
             if (!empty($keywords)) {
                 $sql .= ' AND (`Nom-offre` LIKE :keywords OR `Description-offre` LIKE :keywords OR `Competences-offre` LIKE :keywords)';
