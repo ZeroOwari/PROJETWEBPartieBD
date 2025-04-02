@@ -11,7 +11,7 @@
         $password = $_POST['password'];
     }
     
-    $db = new Etudiant('mysql:host=localhost;dbname=web4all', 'TOtime', 'Password0508');
+    $db = new Etudiant('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');
 
     if ($session = $db->sessionLog($email , $password)){
         // Authentification réussie
