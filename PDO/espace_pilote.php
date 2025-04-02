@@ -40,62 +40,59 @@
 
 <div class="containerpilote">
     <div class="sidebar">
-    <div class="tuteur">
-        <img src="profil.png" alt="Tuteur">
-        <h2 class="titre-connexion-purple">Tuteur</h2>
-    </div>
+        <div class="tuteur">
+            <img src="profil.png" alt="Tuteur">
+            <h2 class="titre-connexion-purple">Tuteur</h2>
+        </div>
 
-    <div class="promo">
+        <div class="promo">
+            <?php
+                $db = new Pilote('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');    
+                $promos = json_decode($db->getAllPromotions());
 
-<?php
-    $db = new Pilote('mysql:host=localhost;dbname=web4all', 'website_user', 'kxHBI-ozJOjvwr_H');    
-    $promos = json_decode($db->getAllPromotions());
+                if (is_array($promos)) {
+                    foreach ($promos as $promo) {
+                        echo '<div class="promo-item">';
+                        echo '<button class="toggle-btn">';
+                        echo htmlspecialchars($promo->{"Nom-promo"});
+                        echo '<span>➕</span></button>';
+                        echo '<ul class="eleve-list">';
 
-    if (is_array($promos)) {
-        foreach ($promos as $promo) {
-            echo '<div class="promo-item">';
-            echo '<button class="toggle-btn">';
-            echo htmlspecialchars($promo->{"Nom-promo"});
-            echo '<span>➕</span></button>';
-            echo '<ul class="eleve-list">';
+                        $students = json_decode($db->getStudentByPromo($promo->{"ID-promo"}));
 
-            $students = json_decode($db->getStudentByPromo($promo->{"ID-promo"}));
+                        if (is_array($students) && !empty($students)) {
+                            foreach ($students as $student) {
+                                echo '<li>' . htmlspecialchars($student->{"Prenom-etudiant"}) . ' | ' . htmlspecialchars($student->{"Nom-etudiant"}) . '</li>';
+                            }
+                        } else {
+                            echo '<li>Aucun étudiant trouvé pour cette promotion.</li>';
+                        }
 
-            if (is_array($students) && !empty($students)) {
-                foreach ($students as $student) {
-                    echo '<li>' . htmlspecialchars($student->{"Prenom-etudiant"}) . ' | ' . htmlspecialchars($student->{"Nom-etudiant"}) . '</li>';
+                        echo '</ul>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo '<p>Erreur : Impossible de récupérer les promotions.</p>';
                 }
-            } else {
-                echo '<li>Aucun étudiant trouvé pour cette promotion.</li>';
-            }
-
-            echo '</ul>';
-            echo '</div>';
-        }
-    } else {
-        echo '<p>Erreur : Impossible de récupérer les promotions.</p>';
-    }
-?>
-
-    
-
-
-    <script src="espace_pilote.js"></script>
-</div>
-    <div class="wrapper">
-    <h2 class="titre-connexion-purple">Statistiques des Stages</h2>
-
-    <canvas id="stageChart"></canvas>
-
-    <button id="filterBtn">Ajouter un filtre</button>
-
-    <div class="filters" id="filterContainer">
-        <button class="filter" data-filter="all">Tous les stagiaires</button>
-        <button class="filter" data-filter="btp">BTP</button>
-        <button class="filter" data-filter="informatique">Informatique</button>
-        <button class="filter" data-filter="generaliste">Généraliste</button>
+            ?>
+        </div>
     </div>
-        <script src="espace_pilote_pourc.php"></script>
+    <script src="espace_pilote.js"></script>
+    <div class="wrapper">
+        <h2 class="titre-connexion-purple">Statistiques des Stages</h2>
+
+        <canvas id="stageChart"></canvas>
+
+        <button id="filterBtn">Ajouter un filtre</button>
+
+        <div class="filters" id="filterContainer">
+            <button class="filter" data-filter="all">Tous les stagiaires</button>
+            <button class="filter" data-filter="btp">BTP</button>
+            <button class="filter" data-filter="informatique">Informatique</button>
+            <button class="filter" data-filter="generaliste">Généraliste</button>
+        </div>
+        
+        <?php include("espace_pilote_pourc.php"); ?>
     </div>
 </div>
 <footer>
