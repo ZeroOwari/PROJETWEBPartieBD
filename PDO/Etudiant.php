@@ -387,8 +387,8 @@ class Etudiant
     public function matchingContent($keywords = null, $location = null, $type = null) {
         try {
             // Start with a base query
-            $sql = 'SELECT * FROM offrestage JOIN entreprise ON offrestage.`ID-entreprise` = entreprise.`ID-entreprise` WHERE 1=1 ORDER BY `ID-offre` DESC';
-            
+            $sql = 'SELECT * FROM offrestage JOIN entreprise ON offrestage.`ID-entreprise` = entreprise.`ID-entreprise` WHERE 1=1';
+    
             // Add conditions dynamically based on non-null parameters
             if (!empty($keywords)) {
                 $sql .= ' AND (`Nom-offre` LIKE :keywords OR `Description-offre` LIKE :keywords OR `Competences-offre` LIKE :keywords)';
@@ -399,6 +399,12 @@ class Etudiant
             if (!empty($type)) {
                 $sql .= ' AND `Type-offre` LIKE :type';
             }
+    
+            // Add ORDER BY clause
+            $sql .= ' ORDER BY `ID-offre` DESC';
+    
+            // Debugging: Output the final SQL query
+            // echo $sql;
     
             $stmt = $this->pdo->prepare($sql);
     

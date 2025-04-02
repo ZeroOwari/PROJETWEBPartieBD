@@ -33,7 +33,6 @@ else {
 
 // Appel de la fonction pagination avec le nombre d'éléments par page
 $paginated = pagination($limit, $recherche);
-echo $paginated;
 printPagination($paginated);
 
 ?>
