@@ -38,6 +38,15 @@ function printPagination($itemPerPage, $offre) {
             $logo = htmlspecialchars($offre['CheminImage-entreprise']);
             $descriptionEntreprise = htmlspecialchars($offre['Description-entreprise']);
 
+            $_SESSION['nom'] = $nom;
+            $_SESSION['ville'] = $ville;
+            $_SESSION['secteur'] = $secteur;
+            $_SESSION['description'] = $description;
+            $_SESSION['competence'] = $competence;
+            $_SESSION['debut'] = $debut;
+            $_SESSION['fin'] = $fin;
+
+
             // Create a unique ID for the popup
             $entreprise_id = str_replace(' ', '_', $nom);
 
@@ -76,6 +85,9 @@ function printPagination($itemPerPage, $offre) {
 
             echo "<div class='titre_a_propos_de_l_entreprise_popup'>A Propos De l'Entreprise</div>";
             echo "<div class='competence_popup'>$descriptionEntreprise</div>";
+            echo "<a class='btn' href='Postuler.php'>Postuler</a>";
+            echo "<a class='btn' href='ModifierOffre.php'>modifier</a>";
+
 
             echo "</div>";
             echo "<div class='modal-footer'></div>";
