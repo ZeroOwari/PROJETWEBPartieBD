@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Étudiants</title>
+</head>
+<body>
+    <h1>Gestion des Étudiants</h1>
+
+    <h2>Rechercher etudiant</h2>
+    <form action="rechercher-etudiant.php" method="GET">
+        <label for="nom">Nom :</label>
+        <input type="text" id="nom" name="nom">
+        <label for="prenom">Prénom :</label>
+        <input type="text" id="prenom" name="prenom">
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <h2>Créer etudiant</h2>
+    <form action="creer-etudiant.php" method="POST">
+        <label for="nom">Nom :</label>
+        <input type="text" id="nom" name="nom" required>
+        <label for="prenom">Prénom :</label>
+        <input type="text" id="prenom" name="prenom" required>
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email" required>
+        <button type="submit">Créer</button>
+    </form>
+
+    <h2>Modifier etudiant</h2>
+    <form action="modifier-etudiant.php" method="POST">
+        <label for="id">ID :</label>
+        <input type="number" id="id" name="id" required>
+        <label for="nom">Nom :</label>
+        <input type="text" id="nom" name="nom" required>
+        <label for="prenom">Prénom :</label>
+        <input type="text" id="prenom" name="prenom" required>
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email" required>
+        <button type="submit">Modifier</button>
+    </form>
+
+    <h2>Supprimer etudiant</h2>
+    <form action="supprimer-etudiant.php" method="POST">
+        <label for="id">ID :</label>
+        <input type="number" id="id" name="id" required>
+        <button type="submit">Supprimer</button>
+    </form>
+
+    <h2>Consulter stat etudiant</h2>
+    <form action="consulter-statistiques.php" method="GET">
+        <label for="id">ID :</label>
+        <input type="number" id="id" name="id" required>
+        <button type="submit">Consulter</button>
+    </form>
+</body>
+</html>
