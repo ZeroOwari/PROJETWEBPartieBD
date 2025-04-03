@@ -63,13 +63,13 @@ class GestionEtu
         return $stmt->execute([':id' => $id]);
     }
 
-    public function consulterStatistiques($id)
+   /* public function consulterStatistiques($id)
     {
         $query = "SELECT recherche_stage FROM etudiants WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':id' => $id]);
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
+    }*/
 }
 ?>
